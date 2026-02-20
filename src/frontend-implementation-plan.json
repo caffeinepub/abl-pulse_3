@@ -1,0 +1,43 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Update Hero Card Content and Fix Medical History Background Color",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Replace the Hero/Welcome card text at the top of the Basic Information page with exact provided bilingual content including title, subtitle, descriptions, and benefits list",
+      "acceptanceCriteria": [
+        "Hero card displays exact title 'Get Your Health Readiness Score'",
+        "Hindi subtitle 'जानें अपना हेल्थ रेडीनेस स्कोर' is displayed",
+        "Full English and Hindi descriptions appear as provided",
+        "All three benefit points are listed exactly as written",
+        "No text modifications or translations applied",
+        "All existing form fields and buttons remain unchanged"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/BasicInfoForm.tsx",
+          "operation": "modify",
+          "description": "Update the Hero/Welcome card section at the top of the component to display the exact provided content. Replace title with 'Get Your Health Readiness Score', subtitle with 'जानें अपना हेल्थ रेडीनेस स्कोर', and include both English and Hindi descriptions. Add the three numbered benefit points exactly as specified. Preserve all structural UI elements including the multi-card layout, form fields (name, age, gender, profession, weight, height), medical history toggles, contact fields, and the navigation button. Do not modify any functionality, validation logic, or localStorage operations."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Change the Medical History card background color to very light pale mint/sage green (#EBF3ED) while maintaining identical position, layout, and premium readability",
+      "acceptanceCriteria": [
+        "Medical History card background is set to #EBF3ED or similar very light sage green",
+        "Card position and layout remain identical to Version 27",
+        "Text contrast is maintained for readability",
+        "Premium minimal appearance is preserved"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/BasicInfoForm.tsx",
+          "operation": "modify",
+          "description": "Update the Medical History card background color to #EBF3ED (very light pale mint/sage green). The file summary indicates the medical history section currently uses 'sage green background' for BP, sugar, and thyroid toggles. Replace the current background color with #EBF3ED while keeping all other styling properties (padding, borders, shadows, text colors, layout) exactly as they are. Ensure the card maintains its current position within the multi-card form layout and that all text (labels, toggle states) remains highly readable with premium appearance."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Health readiness score web application with bilingual (English/Hindi) content, premium beige and sage green design system, medical history tracking, and strict content management requirements",
+  "architectural_notes": [
+    "Content Management: Strict content lock policy - exact text must be preserved without auto-improvements or translations",
+    "Design System: Premium minimal UI with beige background, green header (#739B6E), and very light sage green (#EBF3ED) accent cards",
+    "Bilingual Support: English and Hindi content throughout the application",
+    "Basic Information Page: Main hero/welcome card at top with health readiness score content"
+  ],
+  "known_issues": [],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-replace-the-main-hero-welcome-card-text-at-the-top-of-the-basic-information-page-with-the-exact-provided-content-title-get-your-health-readiness-score-subtitle-description-difference-between-current-habits-optimal-health-lifestyle-discover-the-current-condition-of-your-body-understand-what-kind-of-care-correction-routine-adjustment-it-needs-and-when-hindi-description-benefits-list-1-you-ll-get-to-know-your-health-more-closely-find-out-how-ready-you-are-for-a-change-2-through-guided-questions-you-will-recognize-what-healthy-habits-you-are-missing-3-you-will-identify-small-daily-routine-mistakes-that-may-be-creating-long-term-health-problems-preserve-all-structural-ui-elements-form-fields-toggles-and-buttons-on-the-page",
+      "title": "Replace the main Hero/Welcome card text at the top of the Basic Information page with the exact provided content. Title: 'Get Your Health Readiness Score'. Subtitle: 'जानें अपना हेल्थ रेडीनेस स्कोर'. Description: 'Difference Between Current Habits & Optimal Health Lifestyle. Discover The Current Condition of Your Body & Understand What kind of Care, Correction & Routine Adjustment it Needs — and when.' Hindi Description: 'आपकी आज की आदतों और आपकी सबसे बेहतरीन सेहत के बीच का फासला.' Benefits list: '1. You'll Get to Know Your Health More Closely & Find Out How Ready You are for a Change. 2. Through Guided Questions, You will Recognize what Healthy Habits You are Missing. 3. You will Identify Small Daily Routine Mistakes that may be Creating Long-Term Health Problems.' Preserve all structural UI elements, form fields, toggles, and buttons on the page.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-change-the-medical-history-card-background-color-to-a-very-light-pale-mint-sage-green-ebf3ed-keep-the-card-s-current-position-layout-and-all-existing-styling-exactly-the-same-ensure-text-remains-highly-readable-with-premium-appearance",
+      "title": "Change the Medical History card background color to a very light pale mint/sage green (#EBF3ED). Keep the card's current position, layout, and all existing styling exactly the same. Ensure text remains highly readable with premium appearance.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [],
+  "gameProjectType": "none",
+  "projectName": "Update Hero Card Content and Fix Medical History Background Color",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

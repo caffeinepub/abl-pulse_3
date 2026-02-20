@@ -1,0 +1,263 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700&family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --radius: 0.75rem;
+        
+        /* Brand Colors in OKLCH */
+        --brand-bg: 0.97 0.01 85;
+        --brand-primary: 0.25 0.05 165;
+        --brand-accent: 0.68 0.08 55;
+        --brand-text: 0.58 0.08 50;
+        
+        /* Semantic Colors */
+        --background: 0.97 0.01 85;
+        --foreground: 0.25 0.05 165;
+        --card: 1 0 0;
+        --card-foreground: 0.25 0.05 165;
+        --popover: 1 0 0;
+        --popover-foreground: 0.25 0.05 165;
+        --primary: 0.25 0.05 165;
+        --primary-foreground: 0.99 0 0;
+        --secondary: 0.68 0.08 55;
+        --secondary-foreground: 0.99 0 0;
+        --muted: 0.95 0.01 85;
+        --muted-foreground: 0.58 0.08 50;
+        --accent: 0.68 0.08 55;
+        --accent-foreground: 0.25 0.05 165;
+        --destructive: 0.577 0.245 27.325;
+        --destructive-foreground: 0.99 0 0;
+        --border: 0.88 0.02 75;
+        --input: 0.88 0.02 75;
+        --ring: 0.68 0.08 55;
+        --chart-1: 0.68 0.08 55;
+        --chart-2: 0.58 0.08 50;
+        --chart-3: 0.25 0.05 165;
+        --chart-4: 0.75 0.06 60;
+        --chart-5: 0.82 0.04 70;
+    }
+
+    .dark {
+        --background: 0.18 0.02 165;
+        --foreground: 0.97 0.01 85;
+        --card: 0.22 0.03 165;
+        --card-foreground: 0.97 0.01 85;
+        --popover: 0.22 0.03 165;
+        --popover-foreground: 0.97 0.01 85;
+        --primary: 0.68 0.08 55;
+        --primary-foreground: 0.18 0.02 165;
+        --secondary: 0.32 0.04 165;
+        --secondary-foreground: 0.97 0.01 85;
+        --muted: 0.28 0.03 165;
+        --muted-foreground: 0.75 0.02 80;
+        --accent: 0.68 0.08 55;
+        --accent-foreground: 0.97 0.01 85;
+        --destructive: 0.704 0.191 22.216;
+        --destructive-foreground: 0.97 0.01 85;
+        --border: 0.32 0.04 165;
+        --input: 0.32 0.04 165;
+        --ring: 0.68 0.08 55;
+    }
+
+    * {
+        @apply border-border;
+    }
+    
+    body {
+        @apply bg-brand-bg text-brand-text;
+        font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    
+    .font-heading {
+        font-family: 'Playfair Display', Georgia, serif;
+    }
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+}
+
+/* Premium Pulse Animation */
+@keyframes pulse-glow {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.05;
+    }
+    50% {
+        transform: scale(1.15);
+        opacity: 0.1;
+    }
+}
+
+.pulse-glow {
+    background: radial-gradient(circle, oklch(var(--brand-accent)) 0%, transparent 70%);
+    animation: pulse-glow 5s ease-in-out infinite;
+}
+
+/* Electric Wave Animation - Left to Right Flow */
+@keyframes electric-wave-flow {
+    0% {
+        transform: translateX(-100%) skewX(-15deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.15;
+    }
+    90% {
+        opacity: 0.15;
+    }
+    100% {
+        transform: translateX(200%) skewX(-15deg);
+        opacity: 0;
+    }
+}
+
+@keyframes electric-wave-flow-2 {
+    0% {
+        transform: translateX(-120%) skewX(-12deg) translateY(20%);
+        opacity: 0;
+    }
+    15% {
+        opacity: 0.12;
+    }
+    85% {
+        opacity: 0.12;
+    }
+    100% {
+        transform: translateX(220%) skewX(-12deg) translateY(20%);
+        opacity: 0;
+    }
+}
+
+@keyframes electric-wave-flow-3 {
+    0% {
+        transform: translateX(-110%) skewX(-18deg) translateY(-15%);
+        opacity: 0;
+    }
+    12% {
+        opacity: 0.1;
+    }
+    88% {
+        opacity: 0.1;
+    }
+    100% {
+        transform: translateX(210%) skewX(-18deg) translateY(-15%);
+        opacity: 0;
+    }
+}
+
+.electric-wave-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.electric-wave-overlay::before,
+.electric-wave-overlay::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        oklch(var(--brand-accent) / 0.15) 20%,
+        oklch(var(--brand-primary) / 0.2) 50%,
+        oklch(var(--brand-accent) / 0.15) 80%,
+        transparent 100%
+    );
+    filter: blur(2px);
+}
+
+.electric-wave-overlay::before {
+    animation: electric-wave-flow 8s ease-in-out infinite;
+}
+
+.electric-wave-overlay::after {
+    animation: electric-wave-flow-2 10s ease-in-out infinite 2s;
+    width: 35%;
+}
+
+/* Additional electric wave layer */
+.electric-wave-overlay {
+    background: 
+        linear-gradient(90deg, 
+            transparent 0%, 
+            oklch(var(--brand-primary) / 0.08) 30%,
+            oklch(var(--brand-accent) / 0.12) 60%,
+            transparent 100%
+        );
+    animation: electric-wave-flow-3 12s ease-in-out infinite 4s;
+}
+
+/* Wave Pattern Overlay Animation */
+@keyframes wave-flow {
+    0% {
+        transform: translateX(-50%) translateY(-50%) rotate(0deg);
+    }
+    100% {
+        transform: translateX(-50%) translateY(-50%) rotate(360deg);
+    }
+}
+
+@keyframes wave-flow-reverse {
+    0% {
+        transform: translateX(-50%) translateY(-50%) rotate(0deg) scale(1.2);
+    }
+    100% {
+        transform: translateX(-50%) translateY(-50%) rotate(-360deg) scale(1.2);
+    }
+}
+
+.wave-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200%;
+    height: 200%;
+    pointer-events: none;
+}
+
+.wave-overlay::before,
+.wave-overlay::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    opacity: 0.03;
+}
+
+.wave-overlay::before {
+    background: linear-gradient(45deg, 
+        oklch(var(--brand-primary)) 0%, 
+        transparent 40%, 
+        oklch(var(--brand-accent)) 60%, 
+        transparent 100%
+    );
+    animation: wave-flow 40s linear infinite;
+}
+
+.wave-overlay::after {
+    background: linear-gradient(-45deg, 
+        transparent 0%, 
+        oklch(var(--brand-accent)) 30%, 
+        transparent 50%, 
+        oklch(var(--brand-primary)) 80%, 
+        transparent 100%
+    );
+    animation: wave-flow-reverse 35s linear infinite;
+}

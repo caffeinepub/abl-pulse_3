@@ -1,0 +1,64 @@
+{
+  "kind": "build_request",
+  "title": "Update Hero Card Content and Fix Medical History Background Color",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Replace the main Hero/Welcome card text at the top of the Basic Information page with the exact provided content. Title: 'Get Your Health Readiness Score'. Subtitle: 'जानें अपना हेल्थ रेडीनेस स्कोर'. Description: 'Difference Between Current Habits & Optimal Health Lifestyle. Discover The Current Condition of Your Body & Understand What kind of Care, Correction & Routine Adjustment it Needs — and when.' Hindi Description: 'आपकी आज की आदतों और आपकी सबसे बेहतरीन सेहत के बीच का फासला.' Benefits list: '1. You'll Get to Know Your Health More Closely & Find Out How Ready You are for a Change. 2. Through Guided Questions, You will Recognize what Healthy Habits You are Missing. 3. You will Identify Small Daily Routine Mistakes that may be Creating Long-Term Health Problems.' Preserve all structural UI elements, form fields, toggles, and buttons on the page.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "STRICT CONTENT LOCK: Use the EXACT text provided below for the Header Card. Do NOT auto-improve, translate, or change a single word.",
+          "Replace ONLY the text in the Header Card with my exact provided text. Preserve all other structural UI elements, form fields, toggles, and buttons on the page."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Hero card displays exact title 'Get Your Health Readiness Score'",
+        "Hindi subtitle 'जानें अपना हेल्थ रेडीनेस स्कोर' is displayed",
+        "Full English and Hindi descriptions appear as provided",
+        "All three benefit points are listed exactly as written",
+        "No text modifications or translations applied",
+        "All existing form fields and buttons remain unchanged"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Change the Medical History card background color to a very light pale mint/sage green (#EBF3ED). Keep the card's current position, layout, and all existing styling exactly the same. Ensure text remains highly readable with premium appearance.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "ONLY change the background color to a very light pale mint/sage green (like #EBF3ED) so it looks premium and text remains highly readable.",
+          "Keep its position and layout exactly the same."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Medical History card background is set to #EBF3ED or similar very light sage green",
+        "Card position and layout remain identical to Version 27",
+        "Text contrast is maintained for readability",
+        "Premium minimal appearance is preserved"
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not modify any text content in the Hero card beyond replacing it with the exact provided text",
+    "Do not change any structural UI elements, form fields, toggles, or buttons on the Basic Information page",
+    "Medical History card position and layout must remain exactly as in Version 27"
+  ],
+  "nonGoals": [
+    "Auto-improving or translating the provided content",
+    "Changing any other card backgrounds or colors",
+    "Modifying form validation or functionality",
+    "Updating any other page sections or components"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}
