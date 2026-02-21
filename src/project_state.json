@@ -1,60 +1,117 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "ABL Pulse - A wellness assessment application with admin dashboard for viewing user assessments (Name, Date, Score, WhatsApp, Email). Backend includes assessment and wellness report functionality.",
+  "summary": "Admin Dashboard for Health Assessment Platform - Phase 1 implementation with user assessment data table, quick stats cards, and CSV export functionality",
   "architectural_notes": [
-    "Backend: Motoko (Internet Computer)",
-    "Frontend: React + TypeScript + Tailwind CSS",
-    "Authentication: Internet Identity",
-    "Deployment: Internet Computer canisters",
-    "Admin dashboard with footer navigation for direct access",
-    "Backend folders contain assessment and wellness report related structures"
+    "Admin Dashboard Phase 1: User Assessment Data Table, Quick Stats Cards, CSV Export",
+    "Data table features: Name, Assessment Date, Total Score, Section breakdown, Contact info, Search/Filter, Sorting, Pagination (10-20 entries per page)",
+    "Future phases planned: Analytics graphs (Phase 2), User management & system config (Phase 3)"
   ],
   "known_issues": [],
   "isFixRequest": false,
-  "existing_features": [],
+  "existing_features": [
+    {
+      "id": "feature-create-a-user-assessment-data-table-component-that-displays-all-wellness-reports-from-backend-with-columns-name-assessment-date-total-score-0-160-section-wise-breakdown-sleep-gut-movement-mind-scores-whatsapp-number-and-email-if-provided",
+      "title": "Create a User Assessment Data Table component that displays all wellness reports from backend with columns: Name, Assessment Date, Total Score (0-160), Section-wise breakdown (Sleep, Gut, Movement, Mind scores), WhatsApp Number, and Email (if provided)",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-search-functionality-to-the-user-assessment-data-table-that-filters-by-user-name-in-real-time",
+      "title": "Add search functionality to the User Assessment Data Table that filters by user name in real-time",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-date-range-and-score-range-filters-for-the-user-assessment-data-table",
+      "title": "Implement date range and score range filters for the User Assessment Data Table",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-column-sorting-to-the-user-assessment-data-table-with-clickable-column-headers-for-name-assessment-date-total-score-and-individual-section-scores",
+      "title": "Add column sorting to the User Assessment Data Table with clickable column headers for Name, Assessment Date, Total Score, and individual section scores",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-pagination-for-the-user-assessment-data-table-with-10-20-entries-per-page-and-page-navigation-controls",
+      "title": "Implement pagination for the User Assessment Data Table with 10-20 entries per page and page navigation controls",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-quick-stats-cards-section-displaying-total-assessments-completed-average-score-overall-users-needing-immediate-attention-alert-status-and-recent-submissions-last-7-days",
+      "title": "Create Quick Stats Cards section displaying: Total Assessments Completed, Average Score (overall), Users Needing Immediate Attention (Alert status), and Recent Submissions (last 7 days)",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-csv-export-functionality-that-exports-all-filtered-user-assessment-data-to-a-downloadable-csv-file-with-all-visible-columns",
+      "title": "Add CSV export functionality that exports all filtered User Assessment Data to a downloadable CSV file with all visible columns",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-admindashboardpage-tsx-to-replace-placeholder-content-with-the-new-user-assessment-data-table-quick-stats-cards-and-export-functionality-components",
+      "title": "Update AdminDashboardPage.tsx to replace placeholder content with the new User Assessment Data Table, Quick Stats Cards, and Export functionality components",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-react-query-hook-useadminassessments-in-usequeries-ts-for-fetching-all-wellness-reports-data-with-automatic-refetching-and-caching",
+      "title": "Create React Query hook useAdminAssessments in useQueries.ts for fetching all wellness reports data with automatic refetching and caching",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    }
+  ],
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Admin Dashboard Data Viewer table showing user assessments with Name, Date, Score, WhatsApp, Email",
+      "summary": "User Assessment Data Table with search, filter, sorting, and pagination",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Create comprehensive documentation explaining the backend folder structure related to Assessment and Wellness Reports, including the purpose and function of each folder and file",
-      "reqIds": [
-        "REQ-1"
-      ],
+      "summary": "Quick Stats Cards showing total assessments, average score, alert users, and recent submissions",
+      "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Document the data models used for Assessment and Wellness Reports, including SectionId, SectionScores, MedicalHistory, UserAnswers, SolutionTip, and CompleteWellnessReport types",
-      "reqIds": [
-        "REQ-2"
-      ],
+      "summary": "Basic CSV export functionality for assessment data",
+      "reqIds": [],
       "status": "pending"
     },
     {
-      "id": "AR-4",
-      "summary": "Document available backend functions and API endpoints for wellness reports, including storage operations, ID generation, and data retrieval methods",
+      "id": "AR-11",
+      "summary": "Add backend query function getAllWellnessReports() in main.mo that returns all stored wellness reports with user basic info, timestamps, and calculated scores",
       "reqIds": [
-        "REQ-3"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-5",
-      "summary": "Create a visual representation or structured outline showing how the backend components interact to generate and store wellness reports",
-      "reqIds": [
-        "REQ-4"
+        "REQ-8"
       ],
       "status": "pending"
     }
   ],
-  "gameProjectType": "none",
-  "projectName": "ABL Pulse",
+  "projectName": "ABL Pulse Admin",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

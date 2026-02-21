@@ -55,6 +55,9 @@ export interface CompleteWellnessReport {
         medicalHistory: MedicalHistory;
     };
 }
+export interface UserProfile {
+    name: string;
+}
 export interface UserAnswers {
     diet: Array<bigint>;
     exercise: Array<bigint>;
@@ -66,6 +69,11 @@ export enum SectionId {
     exercise = "exercise",
     sleep = "sleep",
     hydration = "hydration"
+}
+export enum UserRole {
+    admin = "admin",
+    user = "user",
+    guest = "guest"
 }
 export enum Variant_all_elderly_pregnant_youth {
     all = "all",
@@ -89,8 +97,11 @@ export enum Variant_low_high_none {
     none = "none"
 }
 export interface backendInterface {
+    assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     getAllSections(): Promise<Array<SectionId>>;
     getAllWellnessReports(): Promise<Array<[bigint, CompleteWellnessReport]>>;
+    getCallerUserProfile(): Promise<UserProfile | null>;
+    getCallerUserRole(): Promise<UserRole>;
     getSectionScoringDetails(): Promise<{
         questionPoints: Array<[SectionId, Array<bigint>]>;
         scoringReference: Array<[bigint, string]>;
@@ -98,8 +109,11 @@ export interface backendInterface {
         sectionStartQuestion: Array<[SectionId, bigint]>;
     }>;
     getTestData(): Promise<[SectionScores, SectionScores, SectionScores, MedicalHistory, MedicalHistory, MedicalHistory]>;
+    getUserProfile(user: Principal): Promise<UserProfile | null>;
     getWellnessReportById(id: bigint): Promise<CompleteWellnessReport | null>;
     isAdminUser(_email: string): Promise<boolean>;
+    isCallerAdmin(): Promise<boolean>;
+    saveCallerUserProfile(profile: UserProfile): Promise<void>;
     saveWellnessReport(report: CompleteWellnessReport): Promise<bigint>;
     validateMedicalHistory(medicalHistory: MedicalHistory): Promise<MedicalHistory>;
 }

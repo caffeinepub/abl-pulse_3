@@ -79,12 +79,20 @@ export interface UserAnswers {
   'sleep' : Array<bigint>,
   'hydration' : Array<bigint>,
 }
+export interface UserProfile { 'name' : string }
+export type UserRole = { 'admin' : null } |
+  { 'user' : null } |
+  { 'guest' : null };
 export interface _SERVICE {
+  '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'getAllSections' : ActorMethod<[], Array<SectionId>>,
   'getAllWellnessReports' : ActorMethod<
     [],
     Array<[bigint, CompleteWellnessReport]>
   >,
+  'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
+  'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getSectionScoringDetails' : ActorMethod<
     [],
     {
@@ -105,11 +113,14 @@ export interface _SERVICE {
       MedicalHistory,
     ]
   >,
+  'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'getWellnessReportById' : ActorMethod<
     [bigint],
     [] | [CompleteWellnessReport]
   >,
   'isAdminUser' : ActorMethod<[string], boolean>,
+  'isCallerAdmin' : ActorMethod<[], boolean>,
+  'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'saveWellnessReport' : ActorMethod<[CompleteWellnessReport], bigint>,
   'validateMedicalHistory' : ActorMethod<[MedicalHistory], MedicalHistory>,
 }

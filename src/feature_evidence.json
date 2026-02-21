@@ -1,4 +1,186 @@
 {
   "kind": "feature_evidence_report",
-  "features": []
+  "features": [
+    {
+      "featureId": "feature-create-a-user-assessment-data-table-component-that-displays-all-wellness-reports-from-backend-with-columns-name-assessment-date-total-score-0-160-section-wise-breakdown-sleep-gut-movement-mind-scores-whatsapp-number-and-email-if-provided",
+      "featureTitle": "Create a User Assessment Data Table component that displays all wellness reports from backend with columns: Name, Assessment Date, Total Score (0-160), Section-wise breakdown (Sleep, Gut, Movement, Mind scores), WhatsApp Number, and Email (if provided)",
+      "files": [
+        "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+        "frontend/src/types/admin.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-search-functionality-to-the-user-assessment-data-table-that-filters-by-user-name-in-real-time",
+      "featureTitle": "Add search functionality to the User Assessment Data Table that filters by user name in real-time",
+      "files": [
+        "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+        "frontend/src/hooks/useDebounce.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-date-range-and-score-range-filters-for-the-user-assessment-data-table",
+      "featureTitle": "Implement date range and score range filters for the User Assessment Data Table",
+      "files": [
+        "frontend/src/components/admin/AssessmentFilters.tsx",
+        "frontend/src/components/admin/UserAssessmentDataTable.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-column-sorting-to-the-user-assessment-data-table-with-clickable-column-headers-for-name-assessment-date-total-score-and-individual-section-scores",
+      "featureTitle": "Add column sorting to the User Assessment Data Table with clickable column headers for Name, Assessment Date, Total Score, and individual section scores",
+      "files": [
+        "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+        "frontend/src/hooks/useTableSort.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-pagination-for-the-user-assessment-data-table-with-10-20-entries-per-page-and-page-navigation-controls",
+      "featureTitle": "Implement pagination for the User Assessment Data Table with 10-20 entries per page and page navigation controls",
+      "files": [
+        "frontend/src/components/admin/TablePagination.tsx",
+        "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+        "frontend/src/hooks/usePagination.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-quick-stats-cards-section-displaying-total-assessments-completed-average-score-overall-users-needing-immediate-attention-alert-status-and-recent-submissions-last-7-days",
+      "featureTitle": "Create Quick Stats Cards section displaying: Total Assessments Completed, Average Score (overall), Users Needing Immediate Attention (Alert status), and Recent Submissions (last 7 days)",
+      "files": [
+        "frontend/src/components/admin/QuickStatsCards.tsx",
+        "frontend/src/components/admin/StatCard.tsx",
+        "frontend/src/utils/adminStatsCalculator.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-csv-export-functionality-that-exports-all-filtered-user-assessment-data-to-a-downloadable-csv-file-with-all-visible-columns",
+      "featureTitle": "Add CSV export functionality that exports all filtered User Assessment Data to a downloadable CSV file with all visible columns",
+      "files": [
+        "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+        "frontend/src/utils/csvExport.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-admindashboardpage-tsx-to-replace-placeholder-content-with-the-new-user-assessment-data-table-quick-stats-cards-and-export-functionality-components",
+      "featureTitle": "Update AdminDashboardPage.tsx to replace placeholder content with the new User Assessment Data Table, Quick Stats Cards, and Export functionality components",
+      "files": [
+        "frontend/src/components/admin/AccessDeniedScreen.tsx",
+        "frontend/src/pages/AdminDashboardPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-9"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-react-query-hook-useadminassessments-in-usequeries-ts-for-fetching-all-wellness-reports-data-with-automatic-refetching-and-caching",
+      "featureTitle": "Create React Query hook useAdminAssessments in useQueries.ts for fetching all wellness reports data with automatic refetching and caching",
+      "files": [
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-10"
+      ],
+      "confidence": "high"
+    }
+  ]
 }

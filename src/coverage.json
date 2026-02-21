@@ -1,54 +1,172 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-21T22:07:08.592Z",
+  "generatedAt": "2026-02-21T22:27:53.159Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 4,
-    "implemented": 0,
+    "total": 10,
+    "implemented": 9,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Create comprehensive documentation explaining the backend folder structure related to Assessment and Wellness Reports, including the purpose and function of each folder and file",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
+        "summary": "Create a User Assessment Data Table component that displays all wellness reports from backend with columns: Name, Assessment Date, Total Score (0-160), Section-wise breakdown (Sleep, Gut, Movement, Mind scores), WhatsApp Number, and Email (if provided)",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "frontend/src/types/admin.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "frontend/src/types/admin.ts"
+        ]
+      },
+      {
+        "id": "REQ-10",
+        "summary": "Create React Query hook useAdminAssessments in useQueries.ts for fetching all wellness reports data with automatic refetching and caching",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ]
       },
       {
         "id": "REQ-2",
-        "summary": "Document the data models used for Assessment and Wellness Reports, including SectionId, SectionScores, MedicalHistory, UserAnswers, SolutionTip, and CompleteWellnessReport types",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
+        "summary": "Add search functionality to the User Assessment Data Table that filters by user name in real-time",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "frontend/src/hooks/useDebounce.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "frontend/src/hooks/useDebounce.ts"
+        ]
       },
       {
         "id": "REQ-3",
-        "summary": "Document available backend functions and API endpoints for wellness reports, including storage operations, ID generation, and data retrieval methods",
+        "summary": "Implement date range and score range filters for the User Assessment Data Table",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "frontend/src/components/admin/AssessmentFilters.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "frontend/src/components/admin/AssessmentFilters.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Add column sorting to the User Assessment Data Table with clickable column headers for Name, Assessment Date, Total Score, and individual section scores",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "frontend/src/hooks/useTableSort.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "frontend/src/hooks/useTableSort.ts"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Implement pagination for the User Assessment Data Table with 10-20 entries per page and page navigation controls",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "frontend/src/components/admin/TablePagination.tsx",
+          "frontend/src/hooks/usePagination.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "frontend/src/components/admin/TablePagination.tsx",
+          "frontend/src/hooks/usePagination.ts"
+        ]
+      },
+      {
+        "id": "REQ-6",
+        "summary": "Create Quick Stats Cards section displaying: Total Assessments Completed, Average Score (overall), Users Needing Immediate Attention (Alert status), and Recent Submissions (last 7 days)",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/admin/QuickStatsCards.tsx",
+          "frontend/src/components/admin/StatCard.tsx",
+          "frontend/src/utils/adminStatsCalculator.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/admin/QuickStatsCards.tsx",
+          "frontend/src/components/admin/StatCard.tsx",
+          "frontend/src/utils/adminStatsCalculator.ts"
+        ]
+      },
+      {
+        "id": "REQ-7",
+        "summary": "Add CSV export functionality that exports all filtered User Assessment Data to a downloadable CSV file with all visible columns",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "frontend/src/utils/csvExport.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "frontend/src/utils/csvExport.ts"
+        ]
+      },
+      {
+        "id": "REQ-8",
+        "summary": "Add backend query function getAllWellnessReports() in main.mo that returns all stored wellness reports with user basic info, timestamps, and calculated scores",
         "status": "unknown",
         "plannedFiles": [],
         "matchedFiles": []
       },
       {
-        "id": "REQ-4",
-        "summary": "Create a visual representation or structured outline showing how the backend components interact to generate and store wellness reports",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
+        "id": "REQ-9",
+        "summary": "Update AdminDashboardPage.tsx to replace placeholder content with the new User Assessment Data Table, Quick Stats Cards, and Export functionality components",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/AdminDashboardPage.tsx",
+          "frontend/src/components/admin/AccessDeniedScreen.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/AdminDashboardPage.tsx",
+          "frontend/src/components/admin/AccessDeniedScreen.tsx"
+        ]
       }
     ]
   },
   "changedFiles": [
+    "backend/authorization/MixinAuthorization.mo",
+    "backend/authorization/access-control.mo",
     "backend/main.mo",
     "build-request.json",
+    "caffeine.lock.json",
     "feature_evidence.json",
+    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/src/backend.d.ts",
     "frontend/src/backend.ts",
+    "frontend/src/components/admin/AccessDeniedScreen.tsx",
+    "frontend/src/components/admin/AssessmentFilters.tsx",
+    "frontend/src/components/admin/QuickStatsCards.tsx",
+    "frontend/src/components/admin/StatCard.tsx",
+    "frontend/src/components/admin/TablePagination.tsx",
+    "frontend/src/components/admin/UserAssessmentDataTable.tsx",
     "frontend/src/declarations/backend.did.d.ts",
     "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useDebounce.ts",
+    "frontend/src/hooks/usePagination.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/hooks/useTableSort.ts",
+    "frontend/src/pages/AdminDashboardPage.tsx",
+    "frontend/src/types/admin.ts",
+    "frontend/src/utils/adminStatsCalculator.ts",
+    "frontend/src/utils/csvExport.ts",
+    "frontend/src/utils/urlParams.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

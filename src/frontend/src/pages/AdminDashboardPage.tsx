@@ -1,10 +1,39 @@
 import { useNavigate } from '@tanstack/react-router';
-import { Home, Shield } from 'lucide-react';
+import { Home, Shield, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useInternetIdentity } from '@/hooks/useInternetIdentity';
+import { useAdminAssessments } from '@/hooks/useQueries';
+import { AccessDeniedScreen } from '@/components/admin/AccessDeniedScreen';
+import { QuickStatsCards } from '@/components/admin/QuickStatsCards';
+import { UserAssessmentDataTable } from '@/components/admin/UserAssessmentDataTable';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertTriangle } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
+  const { identity, isInitializing } = useInternetIdentity();
+  const { data: assessments = [], isLoading, error } = useAdminAssessments();
+
+  // Show loading while checking authentication
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-brand-bg via-white to-brand-bg/50 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-8 w-8 animate-spin text-brand-primary mx-auto" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if user is authenticated
+  const isAuthenticated = !!identity && !identity.getPrincipal().isAnonymous();
+
+  // For now, allow all authenticated users to access admin dashboard
+  // In production, you would check against admin whitelist
+  if (!isAuthenticated) {
+    return <AccessDeniedScreen />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-bg via-white to-brand-bg/50">
@@ -30,50 +59,32 @@ export default function AdminDashboardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-12 md:py-16">
-        <div className="max-w-4xl mx-auto space-y-8">
-          {/* Welcome Section */}
-          <div className="text-center space-y-4">
-            <div className="mx-auto w-20 h-20 bg-brand-primary/10 rounded-full flex items-center justify-center mb-6 shadow-lg">
-              <Shield className="h-10 w-10 text-brand-primary" />
-            </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading text-brand-primary">
-              Welcome Admin
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              ABL Pulse Administration Dashboard
-            </p>
+      <main className="container mx-auto px-4 py-8 md:py-12">
+        <div className="space-y-8">
+          {/* Page Title */}
+          <div className="space-y-2">
+            <h1 className="text-3xl md:text-4xl font-heading text-brand-primary">Admin Dashboard</h1>
+            <p className="text-muted-foreground">Manage and monitor wellness assessments</p>
           </div>
 
-          {/* Coming Soon Section */}
-          <Card className="shadow-lg border-brand-accent/20 bg-gradient-to-br from-white to-brand-bg/30">
-            <CardHeader>
-              <CardTitle className="text-brand-primary">Dashboard Features Coming Soon</CardTitle>
-              <CardDescription>
-                Additional admin functionality will be available here
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-brand-accent" />
-                  User assessment data viewer with search and filters
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-brand-accent" />
-                  Export wellness reports and analytics
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-brand-accent" />
-                  Admin user management
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-brand-accent" />
-                  System configuration and settings
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
+          {/* Error State */}
+          {error && (
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                Failed to load assessment data. Please try refreshing the page.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* Quick Stats Cards */}
+          <QuickStatsCards data={assessments} isLoading={isLoading} />
+
+          {/* Assessment Data Table */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-brand-primary">User Assessments</h2>
+            <UserAssessmentDataTable data={assessments} isLoading={isLoading} />
+          </div>
         </div>
       </main>
     </div>

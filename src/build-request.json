@@ -1,83 +1,215 @@
 {
   "kind": "build_request",
-  "title": "Document Backend Folder Structure for Assessment Wellness Reports",
-  "projectName": "ABL Pulse",
+  "title": "Admin Dashboard Phase 1: User Assessment Data Table, Stats Cards, and CSV Export",
+  "projectName": "ABL Pulse Admin",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Create comprehensive documentation explaining the backend folder structure related to Assessment and Wellness Reports, including the purpose and function of each folder and file",
-      "target": "backend",
+      "text": "Create a User Assessment Data Table component that displays all wellness reports from backend with columns: Name, Assessment Date, Total Score (0-160), Section-wise breakdown (Sleep, Gut, Movement, Mind scores), WhatsApp Number, and Email (if provided)",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-user-final"
         ],
         "quotes": [
-          "Mujhe Assessment Wellness Report se related Backend me bane folders or uske kya function hai use dijiye"
+          "User Assessment Data Table with search, filter, sorting, and pagination"
         ]
       },
       "acceptanceCriteria": [
-        "Documentation lists all backend folders related to wellness reports",
-        "Each folder's purpose and function is clearly explained",
-        "Key files within folders are identified with their roles",
-        "Documentation is provided in both English and Hindi"
+        "Table displays all stored wellness reports from backend",
+        "Shows user name, assessment date, total score out of 160",
+        "Displays individual section scores with bilingual labels",
+        "Shows contact information (WhatsApp number and email)",
+        "Table is responsive and works on mobile devices"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Document the data models used for Assessment and Wellness Reports, including SectionId, SectionScores, MedicalHistory, UserAnswers, SolutionTip, and CompleteWellnessReport types",
-      "target": "backend",
+      "text": "Add search functionality to the User Assessment Data Table that filters by user name in real-time",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Search & Filter: Name, date range, score range से filter करें"
         ]
       },
       "acceptanceCriteria": [
-        "All data types are documented with their fields and purposes",
-        "Relationships between data models are explained",
-        "Validation functions for answers and scores are documented"
+        "Search input field is prominently displayed above the table",
+        "Filters table rows as user types (debounced)",
+        "Case-insensitive search across user names",
+        "Shows empty state message when no results match"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Document available backend functions and API endpoints for wellness reports, including storage operations, ID generation, and data retrieval methods",
-      "target": "backend",
+      "text": "Implement date range and score range filters for the User Assessment Data Table",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Search & Filter: Name, date range, score range से filter करें"
         ]
       },
       "acceptanceCriteria": [
-        "All public functions are listed with their signatures",
-        "Function purposes and return types are documented",
-        "Usage examples are provided where applicable"
+        "Date range picker allows filtering by assessment date (from/to dates)",
+        "Score range filter allows minimum and maximum total score inputs",
+        "Filters can be combined with search functionality",
+        "Clear filters button resets all active filters"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Create a visual representation or structured outline showing how the backend components interact to generate and store wellness reports",
-      "target": "backend",
+      "text": "Add column sorting to the User Assessment Data Table with clickable column headers for Name, Assessment Date, Total Score, and individual section scores",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Sorting: Columns पर click करके sort करें (score highest to lowest, date newest to oldest)"
         ]
       },
       "acceptanceCriteria": [
-        "Data flow from user input to report generation is documented",
-        "Storage and retrieval processes are explained",
-        "Component interactions are clearly illustrated"
+        "Clicking column header toggles between ascending and descending sort",
+        "Visual indicators (arrows) show current sort direction",
+        "Default sort is by Assessment Date (newest to oldest)",
+        "Maintains current filters when sorting is applied"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Implement pagination for the User Assessment Data Table with 10-20 entries per page and page navigation controls",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Pagination: 10-20 entries per page"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Pagination controls show current page and total pages",
+        "User can navigate to next/previous page",
+        "User can select page size (10, 20 entries per page)",
+        "Pagination state persists across filter/sort operations",
+        "Shows total number of filtered results"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Create Quick Stats Cards section displaying: Total Assessments Completed, Average Score (overall), Users Needing Immediate Attention (Alert status), and Recent Submissions (last 7 days)",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Quick Stats Cards showing total assessments, average score, alert users, and recent submissions"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Four stat cards displayed prominently at top of dashboard",
+        "Total Assessments shows count of all wellness reports",
+        "Average Score calculates mean total score across all assessments",
+        "Alert Users counts reports with total score below alert threshold (defined in constants.ts)",
+        "Recent Submissions counts assessments from last 7 days",
+        "Cards use visually distinct icons and colors",
+        "Stats update automatically when new data is loaded"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Add CSV export functionality that exports all filtered User Assessment Data to a downloadable CSV file with all visible columns",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Basic CSV export functionality for assessment data"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Export button is clearly visible near the data table",
+        "CSV includes all table columns (Name, Date, Total Score, Section Scores, Contact Info)",
+        "Exports currently filtered/sorted data, not just current page",
+        "CSV file is named with timestamp (e.g., abl-assessments-2024-01-15.csv)",
+        "Download triggers immediately on button click",
+        "Shows loading state during export generation"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Add backend query function getAllWellnessReports() in main.mo that returns all stored wellness reports with user basic info, timestamps, and calculated scores",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Query function returns array of all wellness reports",
+        "Each report includes user name, WhatsApp number, email, assessment date",
+        "Includes total score and all four section scores",
+        "Function is callable by authenticated admin users",
+        "Returns empty array if no reports exist"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Update AdminDashboardPage.tsx to replace placeholder content with the new User Assessment Data Table, Quick Stats Cards, and Export functionality components",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Page displays Quick Stats Cards at the top",
+        "User Assessment Data Table is prominently displayed below stats",
+        "Export button is accessible near the table",
+        "Page maintains existing navigation header",
+        "Loading state shown while fetching assessment data",
+        "Error handling displays user-friendly message if data fetch fails"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "text": "Create React Query hook useAdminAssessments in useQueries.ts for fetching all wellness reports data with automatic refetching and caching",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Hook calls backend getAllWellnessReports() query function",
+        "Returns loading, error, and data states",
+        "Implements appropriate staleTime and cacheTime for dashboard data",
+        "Automatically refetches on window focus",
+        "Works seamlessly with existing Internet Identity authentication"
       ]
     }
   ],
   "constraints": [
-    "Documentation must be based on the actual backend/main.mo implementation",
-    "Do not modify existing backend code structure",
-    "Keep documentation accessible to both technical and non-technical users"
+    "Do not modify frontend/src/hooks/useInternetIdentity.ts or frontend/src/main.tsx",
+    "Do not edit shadcn UI components in frontend/src/components/ui",
+    "All backend logic must remain in the single main.mo actor file",
+    "Use existing score threshold constants from frontend/src/config/constants.ts for Alert status determination",
+    "Maintain existing bilingual support pattern (English/Hindi) where applicable in UI labels"
   ],
   "nonGoals": [
-    "Modifying the existing backend functionality",
-    "Adding new backend features",
-    "Creating new data models or API endpoints"
+    "Do not implement Phase 2 features (analytics graphs, PDF report generation, individual user detail view)",
+    "Do not implement Phase 3 features (user management, system configuration panel)",
+    "Do not add real-time data updates or WebSocket connections",
+    "Do not implement user authentication beyond existing Internet Identity integration",
+    "Do not modify the assessment flow or wellness report generation logic"
   ],
   "imageRequirements": {
     "required": [],

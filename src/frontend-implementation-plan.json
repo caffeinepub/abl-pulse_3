@@ -1,6 +1,220 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Document Backend Folder Structure for Assessment Wellness Reports",
-  "requirements": []
+  "title": "Admin Dashboard Phase 1: User Assessment Data Table, Stats Cards, and CSV Export",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Create a User Assessment Data Table component that displays all wellness reports from backend with columns: Name, Assessment Date, Total Score (0-160), Section-wise breakdown (Sleep, Gut, Movement, Mind scores), WhatsApp Number, and Email (if provided)",
+      "acceptanceCriteria": [
+        "Table displays all stored wellness reports from backend",
+        "Shows user name, assessment date, total score out of 160",
+        "Displays individual section scores with bilingual labels",
+        "Shows contact information (WhatsApp number and email)",
+        "Table is responsive and works on mobile devices"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "operation": "create",
+          "description": "Create a comprehensive data table component that displays wellness assessment data in a responsive table layout. The table should render columns for user name, assessment date (formatted), total score out of 160, section scores (sleep, hydration, diet, exercise) with bilingual labels (English/Hindi), WhatsApp number, and email. Use shadcn/ui Table components from frontend/src/components/ui for consistent styling. Include proper TypeScript types for the assessment data structure based on the backend CompleteWellnessReport interface. Handle empty states when no data is available. Ensure mobile responsiveness with horizontal scrolling or stacked layout on smaller screens."
+        },
+        {
+          "path": "frontend/src/types/admin.ts",
+          "operation": "create",
+          "description": "Create TypeScript type definitions for admin dashboard data structures. Define AdminAssessmentRow type containing id (bigint), userName (string), assessmentDate (Date), totalScore (number), sectionScores object with sleep/hydration/diet/exercise numbers, whatsappNumber (string), and email (string | null). Define additional utility types for table sorting, filtering, and pagination state. Export types that will be shared across admin components."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Add search functionality to the User Assessment Data Table that filters by user name in real-time",
+      "acceptanceCriteria": [
+        "Search input field is prominently displayed above the table",
+        "Filters table rows as user types (debounced)",
+        "Case-insensitive search across user names",
+        "Shows empty state message when no results match"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "operation": "modify",
+          "description": "Add search functionality to the UserAssessmentDataTable component. Create a search input field using shadcn/ui Input component positioned above the table. Implement debounced search (300ms delay) using a custom hook or lodash debounce to filter table rows by user name in real-time. Perform case-insensitive matching. Display a user-friendly empty state message when search yields no results. Maintain search term in local component state and apply filtering to the data before rendering table rows."
+        },
+        {
+          "path": "frontend/src/hooks/useDebounce.ts",
+          "operation": "create",
+          "description": "Create a reusable useDebounce custom hook that accepts a value and delay (in milliseconds) and returns the debounced value. This hook will be used to debounce the search input to avoid excessive filtering operations while the user is typing. Use useEffect and setTimeout to implement the debounce logic with proper cleanup."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Implement date range and score range filters for the User Assessment Data Table",
+      "acceptanceCriteria": [
+        "Date range picker allows filtering by assessment date (from/to dates)",
+        "Score range filter allows minimum and maximum total score inputs",
+        "Filters can be combined with search functionality",
+        "Clear filters button resets all active filters"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "operation": "modify",
+          "description": "Add filter controls to the UserAssessmentDataTable component. Implement date range picker using shadcn/ui Popover and Calendar components to filter by assessment date (from and to dates). Add score range inputs using shadcn/ui Input components for minimum and maximum total score filtering (0-160 range). Ensure all filters (search, date range, score range) work together by applying combined filtering logic to the data. Add a Clear Filters button using shadcn/ui Button component that resets all filter states to their defaults. Display active filter count badge to indicate how many filters are applied."
+        },
+        {
+          "path": "frontend/src/components/admin/AssessmentFilters.tsx",
+          "operation": "create",
+          "description": "Create a dedicated AssessmentFilters component to encapsulate all filter controls (search input, date range picker, score range inputs, and clear filters button). Accept filter state and onChange callbacks as props to maintain filter state in the parent UserAssessmentDataTable component. Use shadcn/ui components (Input, Button, Popover, Calendar) for consistent styling. Organize filters in a responsive layout using flexbox or grid. Include proper TypeScript types for filter state object. Add visual indicators showing which filters are currently active."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Add column sorting to the User Assessment Data Table with clickable column headers for Name, Assessment Date, Total Score, and individual section scores",
+      "acceptanceCriteria": [
+        "Clicking column header toggles between ascending and descending sort",
+        "Visual indicators (arrows) show current sort direction",
+        "Default sort is by Assessment Date (newest to oldest)",
+        "Maintains current filters when sorting is applied"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "operation": "modify",
+          "description": "Add column sorting functionality to the UserAssessmentDataTable component. Make column headers for Name, Assessment Date, Total Score, and section scores (sleep, hydration, diet, exercise) clickable. Implement sort state tracking with current column and direction (ascending/descending). Add visual indicators (up/down arrows using icons from lucide-react) to show the active sort column and direction. Set default sort to Assessment Date in descending order (newest first). Apply sorting logic after filtering to maintain filter state. Use proper comparison functions for different data types (string, Date, number)."
+        },
+        {
+          "path": "frontend/src/hooks/useTableSort.ts",
+          "operation": "create",
+          "description": "Create a reusable useTableSort custom hook that manages table sorting state and logic. Accept sortable column keys as a generic type parameter. Return current sort column, sort direction, a function to handle column header clicks (toggles direction or switches column), and a comparator function to use with array.sort(). This hook encapsulates sorting logic for reuse across different table components."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Implement pagination for the User Assessment Data Table with 10-20 entries per page and page navigation controls",
+      "acceptanceCriteria": [
+        "Pagination controls show current page and total pages",
+        "User can navigate to next/previous page",
+        "User can select page size (10, 20 entries per page)",
+        "Pagination state persists across filter/sort operations",
+        "Shows total number of filtered results"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "operation": "modify",
+          "description": "Add pagination functionality to the UserAssessmentDataTable component. Implement pagination state tracking (current page, page size). Add pagination controls at the bottom of the table using shadcn/ui Pagination component or custom controls with Button components. Display current page, total pages, and total filtered results count. Add page size selector (dropdown or buttons) allowing users to choose 10 or 20 entries per page. Implement next/previous page navigation with disabled states when at first/last page. Apply pagination after filtering and sorting to ensure correct page ranges. Reset to page 1 when filters change."
+        },
+        {
+          "path": "frontend/src/components/admin/TablePagination.tsx",
+          "operation": "create",
+          "description": "Create a reusable TablePagination component that renders pagination controls. Accept props for current page, total pages, page size, page size options, total items count, and callback functions for page changes and page size changes. Display current page info (e.g., 'Showing 1-10 of 45 results'). Render previous/next buttons with proper disabled states. Add page size selector using shadcn/ui Select component. Use shadcn/ui Button components for navigation controls. Ensure responsive layout for mobile devices."
+        },
+        {
+          "path": "frontend/src/hooks/usePagination.ts",
+          "operation": "create",
+          "description": "Create a reusable usePagination custom hook that manages pagination state and logic. Accept total items count and initial page size as parameters. Return current page, page size, total pages, functions to change page and page size, and a function to get the current page slice of data. Include logic to reset to page 1 when total items change (e.g., after filtering). This hook encapsulates pagination logic for reuse across different paginated components."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Create Quick Stats Cards section displaying: Total Assessments Completed, Average Score (overall), Users Needing Immediate Attention (Alert status), and Recent Submissions (last 7 days)",
+      "acceptanceCriteria": [
+        "Four stat cards displayed prominently at top of dashboard",
+        "Total Assessments shows count of all wellness reports",
+        "Average Score calculates mean total score across all assessments",
+        "Alert Users counts reports with total score below alert threshold (defined in constants.ts)",
+        "Recent Submissions counts assessments from last 7 days",
+        "Cards use visually distinct icons and colors",
+        "Stats update automatically when new data is loaded"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/admin/QuickStatsCards.tsx",
+          "operation": "create",
+          "description": "Create a QuickStatsCards component that displays four key statistics at the top of the admin dashboard. Accept an array of assessment data as props. Calculate and display: (1) Total Assessments - count of all reports, (2) Average Score - mean total score across all assessments rounded to 1 decimal, (3) Alert Users - count of reports with total score below the alert threshold from frontend/src/config/constants.ts, (4) Recent Submissions - count of assessments submitted in the last 7 days. Use shadcn/ui Card components for each stat card. Include distinct icons from lucide-react (Users, TrendingUp, AlertTriangle, Calendar). Apply color coding (e.g., red for alerts, green for good metrics). Display cards in a responsive grid layout (2x2 on mobile, 4 columns on desktop). Include loading state skeletons when data is being fetched."
+        },
+        {
+          "path": "frontend/src/components/admin/StatCard.tsx",
+          "operation": "create",
+          "description": "Create a reusable StatCard component for displaying individual statistics. Accept props for title, value, icon (React node), color/variant, and optional subtitle. Use shadcn/ui Card component as base. Display the icon prominently with the specified color. Show the title and large formatted value. Include optional trend indicator or subtitle. Apply responsive sizing and consistent padding. This component will be used by QuickStatsCards for each statistic."
+        },
+        {
+          "path": "frontend/src/utils/adminStatsCalculator.ts",
+          "operation": "create",
+          "description": "Create utility functions for calculating admin dashboard statistics from assessment data. Export functions: calculateTotalAssessments (returns count), calculateAverageScore (returns mean total score), calculateAlertUsers (counts reports below alert threshold from constants.ts), calculateRecentSubmissions (counts assessments from last 7 days based on timestamp). Accept array of assessment data with proper TypeScript typing. Handle edge cases like empty arrays. These pure functions will be used by the QuickStatsCards component."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Add CSV export functionality that exports all filtered User Assessment Data to a downloadable CSV file with all visible columns",
+      "acceptanceCriteria": [
+        "Export button is clearly visible near the data table",
+        "CSV includes all table columns (Name, Date, Total Score, Section Scores, Contact Info)",
+        "Exports currently filtered/sorted data, not just current page",
+        "CSV file is named with timestamp (e.g., abl-assessments-2024-01-15.csv)",
+        "Download triggers immediately on button click",
+        "Shows loading state during export generation"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "operation": "modify",
+          "description": "Add CSV export functionality to the UserAssessmentDataTable component. Create an Export button using shadcn/ui Button component with a Download icon from lucide-react, positioned prominently near the table (e.g., in the filter controls area). When clicked, generate a CSV file from the currently filtered and sorted data (all rows, not just current page). Use the CSV export utility to convert data to CSV format. Trigger immediate download with a filename including timestamp (e.g., abl-assessments-2024-01-15.csv). Show loading state on the button during CSV generation. Include all table columns: Name, Assessment Date, Total Score, section scores (Sleep, Hydration, Diet, Exercise), WhatsApp Number, and Email."
+        },
+        {
+          "path": "frontend/src/utils/csvExport.ts",
+          "operation": "create",
+          "description": "Create utility functions for CSV export functionality. Export a function generateCSV that accepts an array of assessment data rows and returns a CSV string. Include proper CSV formatting with quoted fields and escaped commas/quotes. Export a function downloadCSV that accepts CSV content and filename, creates a Blob, generates a download URL, and triggers browser download. Export a function formatAssessmentDataForCSV that transforms assessment data objects into flat CSV row objects with all required columns. Include proper TypeScript types for input data. Handle special characters and ensure cross-browser compatibility."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Update AdminDashboardPage.tsx to replace placeholder content with the new User Assessment Data Table, Quick Stats Cards, and Export functionality components",
+      "acceptanceCriteria": [
+        "Page displays Quick Stats Cards at the top",
+        "User Assessment Data Table is prominently displayed below stats",
+        "Export button is accessible near the table",
+        "Page maintains existing navigation header",
+        "Loading state shown while fetching assessment data",
+        "Error handling displays user-friendly message if data fetch fails"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/AdminDashboardPage.tsx",
+          "operation": "modify",
+          "description": "Replace the placeholder content in AdminDashboardPage with the new Phase 1 admin dashboard components. Use the authorization component's admin guard pattern to ensure only authenticated admin users can access this page. Display an AccessDeniedScreen component for non-admin users. For authorized admins, render the following layout: (1) page header with title and navigation back to home, (2) QuickStatsCards component at the top displaying key statistics, (3) UserAssessmentDataTable component below the stats cards with all filtering, sorting, pagination, and export functionality. Use the useAdminAssessments React Query hook to fetch assessment data. Display a loading state (spinner or skeleton) while data is being fetched. Show an error message with retry button if data fetch fails. Apply proper spacing and responsive layout using Tailwind CSS classes. Maintain the existing navigation header pattern from other pages."
+        },
+        {
+          "path": "frontend/src/components/admin/AccessDeniedScreen.tsx",
+          "operation": "create",
+          "description": "Create an AccessDeniedScreen component to display when non-admin users attempt to access the admin dashboard. Show a centered layout with a shield/lock icon from lucide-react, a bilingual heading (English/Hindi) explaining access is restricted, and a button to return to the home page. Use shadcn/ui Card and Button components for consistent styling. Include a message explaining that only authorized administrators can access this area. This component will be used in AdminDashboardPage when the user is not an admin."
+        }
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "summary": "Create React Query hook useAdminAssessments in useQueries.ts for fetching all wellness reports data with automatic refetching and caching",
+      "acceptanceCriteria": [
+        "Hook calls backend getAllWellnessReports() query function",
+        "Returns loading, error, and data states",
+        "Implements appropriate staleTime and cacheTime for dashboard data",
+        "Automatically refetches on window focus",
+        "Works seamlessly with existing Internet Identity authentication"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add a new React Query hook useAdminAssessments to fetch all wellness reports for the admin dashboard. Use the useActor hook to get the authenticated backend actor. Call actor.getAllWellnessReports() which returns an array of tuples [bigint, CompleteWellnessReport]. Configure the query with queryKey ['adminAssessments'], appropriate staleTime (e.g., 30 seconds) and cacheTime (e.g., 5 minutes) for dashboard data. Enable automatic refetch on window focus. Transform the backend data into a more usable frontend format by converting bigint IDs to numbers, extracting user names from profiles, calculating section scores, and formatting timestamps. Return loading, error, and transformed data states. Handle the case where the actor is not yet available (user not authenticated). Include proper TypeScript typing for the return value."
+        }
+      ]
+    }
+  ]
 }

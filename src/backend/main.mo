@@ -7,8 +7,44 @@ import Nat "mo:core/Nat";
 import Text "mo:core/Text";
 import Array "mo:core/Array";
 import Runtime "mo:core/Runtime";
+import Principal "mo:core/Principal";
+import MixinAuthorization "authorization/MixinAuthorization";
+import AccessControl "authorization/access-control";
 
 actor {
+  // Initialize the access control system
+  let accessControlState = AccessControl.initState();
+  include MixinAuthorization(accessControlState);
+
+  // User profile type
+  public type UserProfile = {
+    name : Text;
+  };
+
+  let userProfiles = Map.empty<Principal, UserProfile>();
+
+  // User profile management functions
+  public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can access profiles");
+    };
+    userProfiles.get(caller);
+  };
+
+  public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
+    if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Can only view your own profile");
+    };
+    userProfiles.get(user);
+  };
+
+  public shared ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can save profiles");
+    };
+    userProfiles.add(caller, profile);
+  };
+
   // Unique IDs for sections
   public type SectionId = {
     #sleep;
@@ -84,8 +120,9 @@ actor {
 
   var nextWellnessReportId = 0;
 
-  // Storage for wellness reports
+  // Storage for wellness reports with owner tracking
   let wellnessReports = Map.empty<Id, CompleteWellnessReport>();
+  let reportOwners = Map.empty<Id, Principal>();
 
   // Helper function to incrementally generate unique report IDs
   func getNextWellnessReportId() : Nat {
@@ -150,18 +187,34 @@ actor {
 
   // Exposed service to save a new report, returns unique report ID
   public shared ({ caller }) func saveWellnessReport(report : CompleteWellnessReport) : async Nat {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can save wellness reports");
+    };
     let id = getNextWellnessReportId();
     wellnessReports.add(id, report);
+    reportOwners.add(id, caller);
     id;
   };
 
   // Exposed service to retrieve a specific report by ID
   public shared ({ caller }) func getWellnessReportById(id : Nat) : async ?CompleteWellnessReport {
-    wellnessReports.get(id);
+    // Check if caller owns the report or is an admin
+    switch (reportOwners.get(id)) {
+      case null { null };
+      case (?owner) {
+        if (caller != owner and not AccessControl.isAdmin(accessControlState, caller)) {
+          Runtime.trap("Unauthorized: Can only view your own wellness reports");
+        };
+        wellnessReports.get(id);
+      };
+    };
   };
 
-  // Exposed service to retrieve all reports
-  public shared ({ caller }) func getAllWellnessReports() : async [(Nat, CompleteWellnessReport)] {
+  // Exposed service to retrieve all reports (admin-only due to sensitive health data)
+  public query ({ caller }) func getAllWellnessReports() : async [(Nat, CompleteWellnessReport)] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can view all wellness reports");
+    };
     wellnessReports.toArray();
   };
 
@@ -248,7 +301,7 @@ actor {
   //----------------------------------------------
   // Handling of test data
   //----------------------------------------------
-  public query ({ caller }) func getTestData() : async (SectionScores, SectionScores, SectionScores, MedicalHistory, MedicalHistory, MedicalHistory) {
+  public func getTestData() : async (SectionScores, SectionScores, SectionScores, MedicalHistory, MedicalHistory, MedicalHistory) {
     ({ sleep = 39; hydration = 30; exercise = 34; diet = 39 }, // healthy
      { sleep = 17; hydration = 20; exercise = 27; diet = 18 }, // serious issues
      { sleep = 11; hydration = 9; exercise = 17; diet = 12 }, // problems in all sections
