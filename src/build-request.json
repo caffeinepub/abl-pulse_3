@@ -1,215 +1,58 @@
 {
   "kind": "build_request",
-  "title": "Admin Dashboard Phase 1: User Assessment Data Table, Stats Cards, and CSV Export",
-  "projectName": "ABL Pulse Admin",
+  "title": "Fix Admin Button Footer Link to Admin Dashboard",
+  "projectName": "ABL Pulse",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Create a User Assessment Data Table component that displays all wellness reports from backend with columns: Name, Assessment Date, Total Score (0-160), Section-wise breakdown (Sleep, Gut, Movement, Mind scores), WhatsApp Number, and Email (if provided)",
+      "text": "Update the admin button in the ContactFooter component to navigate directly to the admin dashboard page (/admin) without requiring authentication or authorization checks",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-final"
+          "msg-user-3"
         ],
         "quotes": [
-          "User Assessment Data Table with search, filter, sorting, and pagination"
+          "Admin Authentication: admin dashboard ko directly accessible hona chahiye",
+          "Admin Button Location: ABL Pulse ke Footer me",
+          "Sirf Link Karna hai. Koi Work Is time nahi karna hai, only link karna hai"
         ]
       },
       "acceptanceCriteria": [
-        "Table displays all stored wellness reports from backend",
-        "Shows user name, assessment date, total score out of 160",
-        "Displays individual section scores with bilingual labels",
-        "Shows contact information (WhatsApp number and email)",
-        "Table is responsive and works on mobile devices"
+        "Clicking the admin button in the footer navigates to the admin dashboard page",
+        "No 'Access Denied' screen appears when clicking the admin button",
+        "Admin dashboard page loads directly without authentication checks"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Add search functionality to the User Assessment Data Table that filters by user name in real-time",
+      "text": "Remove or bypass authentication/authorization checks on the AdminDashboardPage component to allow direct access without login",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-final"
+          "msg-user-3"
         ],
         "quotes": [
-          "Search & Filter: Name, date range, score range से filter करें"
+          "admin dashboard ko directly accessible hona chahiye"
         ]
       },
       "acceptanceCriteria": [
-        "Search input field is prominently displayed above the table",
-        "Filters table rows as user types (debounced)",
-        "Case-insensitive search across user names",
-        "Shows empty state message when no results match"
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Implement date range and score range filters for the User Assessment Data Table",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-final"
-        ],
-        "quotes": [
-          "Search & Filter: Name, date range, score range से filter करें"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Date range picker allows filtering by assessment date (from/to dates)",
-        "Score range filter allows minimum and maximum total score inputs",
-        "Filters can be combined with search functionality",
-        "Clear filters button resets all active filters"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Add column sorting to the User Assessment Data Table with clickable column headers for Name, Assessment Date, Total Score, and individual section scores",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-final"
-        ],
-        "quotes": [
-          "Sorting: Columns पर click करके sort करें (score highest to lowest, date newest to oldest)"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Clicking column header toggles between ascending and descending sort",
-        "Visual indicators (arrows) show current sort direction",
-        "Default sort is by Assessment Date (newest to oldest)",
-        "Maintains current filters when sorting is applied"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Implement pagination for the User Assessment Data Table with 10-20 entries per page and page navigation controls",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-final"
-        ],
-        "quotes": [
-          "Pagination: 10-20 entries per page"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Pagination controls show current page and total pages",
-        "User can navigate to next/previous page",
-        "User can select page size (10, 20 entries per page)",
-        "Pagination state persists across filter/sort operations",
-        "Shows total number of filtered results"
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Create Quick Stats Cards section displaying: Total Assessments Completed, Average Score (overall), Users Needing Immediate Attention (Alert status), and Recent Submissions (last 7 days)",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-final"
-        ],
-        "quotes": [
-          "Quick Stats Cards showing total assessments, average score, alert users, and recent submissions"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Four stat cards displayed prominently at top of dashboard",
-        "Total Assessments shows count of all wellness reports",
-        "Average Score calculates mean total score across all assessments",
-        "Alert Users counts reports with total score below alert threshold (defined in constants.ts)",
-        "Recent Submissions counts assessments from last 7 days",
-        "Cards use visually distinct icons and colors",
-        "Stats update automatically when new data is loaded"
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "text": "Add CSV export functionality that exports all filtered User Assessment Data to a downloadable CSV file with all visible columns",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-final"
-        ],
-        "quotes": [
-          "Basic CSV export functionality for assessment data"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Export button is clearly visible near the data table",
-        "CSV includes all table columns (Name, Date, Total Score, Section Scores, Contact Info)",
-        "Exports currently filtered/sorted data, not just current page",
-        "CSV file is named with timestamp (e.g., abl-assessments-2024-01-15.csv)",
-        "Download triggers immediately on button click",
-        "Shows loading state during export generation"
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "text": "Add backend query function getAllWellnessReports() in main.mo that returns all stored wellness reports with user basic info, timestamps, and calculated scores",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-user-final"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Query function returns array of all wellness reports",
-        "Each report includes user name, WhatsApp number, email, assessment date",
-        "Includes total score and all four section scores",
-        "Function is callable by authenticated admin users",
-        "Returns empty array if no reports exist"
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "text": "Update AdminDashboardPage.tsx to replace placeholder content with the new User Assessment Data Table, Quick Stats Cards, and Export functionality components",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-final"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Page displays Quick Stats Cards at the top",
-        "User Assessment Data Table is prominently displayed below stats",
-        "Export button is accessible near the table",
-        "Page maintains existing navigation header",
-        "Loading state shown while fetching assessment data",
-        "Error handling displays user-friendly message if data fetch fails"
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "text": "Create React Query hook useAdminAssessments in useQueries.ts for fetching all wellness reports data with automatic refetching and caching",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-final"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Hook calls backend getAllWellnessReports() query function",
-        "Returns loading, error, and data states",
-        "Implements appropriate staleTime and cacheTime for dashboard data",
-        "Automatically refetches on window focus",
-        "Works seamlessly with existing Internet Identity authentication"
+        "Admin dashboard page renders without checking for authentication state",
+        "Users can view admin dashboard content immediately upon navigation",
+        "No access denied or login redirect logic blocks access to the admin dashboard"
       ]
     }
   ],
   "constraints": [
-    "Do not modify frontend/src/hooks/useInternetIdentity.ts or frontend/src/main.tsx",
-    "Do not edit shadcn UI components in frontend/src/components/ui",
-    "All backend logic must remain in the single main.mo actor file",
-    "Use existing score threshold constants from frontend/src/config/constants.ts for Alert status determination",
-    "Maintain existing bilingual support pattern (English/Hindi) where applicable in UI labels"
+    "Do not modify the backend authentication logic",
+    "Only update frontend routing and navigation behavior",
+    "Keep all existing admin dashboard functionality intact"
   ],
   "nonGoals": [
-    "Do not implement Phase 2 features (analytics graphs, PDF report generation, individual user detail view)",
-    "Do not implement Phase 3 features (user management, system configuration panel)",
-    "Do not add real-time data updates or WebSocket connections",
-    "Do not implement user authentication beyond existing Internet Identity integration",
-    "Do not modify the assessment flow or wellness report generation logic"
+    "Adding new admin features or functionality",
+    "Implementing proper authentication system",
+    "Modifying admin dashboard UI or data display",
+    "Adding security measures or access control"
   ],
   "imageRequirements": {
     "required": [],

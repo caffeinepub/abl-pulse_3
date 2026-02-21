@@ -1,9 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
-import { Home, Shield, Loader2 } from 'lucide-react';
+import { Home, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useInternetIdentity } from '@/hooks/useInternetIdentity';
 import { useAdminAssessments } from '@/hooks/useQueries';
-import { AccessDeniedScreen } from '@/components/admin/AccessDeniedScreen';
 import { QuickStatsCards } from '@/components/admin/QuickStatsCards';
 import { UserAssessmentDataTable } from '@/components/admin/UserAssessmentDataTable';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -11,29 +9,7 @@ import { AlertTriangle } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
-  const { identity, isInitializing } = useInternetIdentity();
   const { data: assessments = [], isLoading, error } = useAdminAssessments();
-
-  // Show loading while checking authentication
-  if (isInitializing) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-brand-bg via-white to-brand-bg/50 flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <Loader2 className="h-8 w-8 animate-spin text-brand-primary mx-auto" />
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Check if user is authenticated
-  const isAuthenticated = !!identity && !identity.getPrincipal().isAnonymous();
-
-  // For now, allow all authenticated users to access admin dashboard
-  // In production, you would check against admin whitelist
-  if (!isAuthenticated) {
-    return <AccessDeniedScreen />;
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-bg via-white to-brand-bg/50">

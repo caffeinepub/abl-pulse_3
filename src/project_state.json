@@ -1,84 +1,21 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Admin Dashboard for Health Assessment Platform - Phase 1 implementation with user assessment data table, quick stats cards, and CSV export functionality",
+  "summary": "ABL Pulse project with admin dashboard feature",
   "architectural_notes": [
-    "Admin Dashboard Phase 1: User Assessment Data Table, Quick Stats Cards, CSV Export",
-    "Data table features: Name, Assessment Date, Total Score, Section breakdown, Contact info, Search/Filter, Sorting, Pagination (10-20 entries per page)",
-    "Future phases planned: Analytics graphs (Phase 2), User management & system config (Phase 3)"
+    "Admin dashboard should be directly accessible without authentication",
+    "Admin button located in ABL Pulse footer"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "Admin button in footer showing 'Access Denied' page instead of linking to admin dashboard"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-create-a-user-assessment-data-table-component-that-displays-all-wellness-reports-from-backend-with-columns-name-assessment-date-total-score-0-160-section-wise-breakdown-sleep-gut-movement-mind-scores-whatsapp-number-and-email-if-provided",
-      "title": "Create a User Assessment Data Table component that displays all wellness reports from backend with columns: Name, Assessment Date, Total Score (0-160), Section-wise breakdown (Sleep, Gut, Movement, Mind scores), WhatsApp Number, and Email (if provided)",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-search-functionality-to-the-user-assessment-data-table-that-filters-by-user-name-in-real-time",
-      "title": "Add search functionality to the User Assessment Data Table that filters by user name in real-time",
+      "id": "feature-remove-or-bypass-authentication-authorization-checks-on-the-admindashboardpage-component-to-allow-direct-access-without-login",
+      "title": "Remove or bypass authentication/authorization checks on the AdminDashboardPage component to allow direct access without login",
       "reqIds": [
         "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-date-range-and-score-range-filters-for-the-user-assessment-data-table",
-      "title": "Implement date range and score range filters for the User Assessment Data Table",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-column-sorting-to-the-user-assessment-data-table-with-clickable-column-headers-for-name-assessment-date-total-score-and-individual-section-scores",
-      "title": "Add column sorting to the User Assessment Data Table with clickable column headers for Name, Assessment Date, Total Score, and individual section scores",
-      "reqIds": [
-        "REQ-4"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-pagination-for-the-user-assessment-data-table-with-10-20-entries-per-page-and-page-navigation-controls",
-      "title": "Implement pagination for the User Assessment Data Table with 10-20 entries per page and page navigation controls",
-      "reqIds": [
-        "REQ-5"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-create-quick-stats-cards-section-displaying-total-assessments-completed-average-score-overall-users-needing-immediate-attention-alert-status-and-recent-submissions-last-7-days",
-      "title": "Create Quick Stats Cards section displaying: Total Assessments Completed, Average Score (overall), Users Needing Immediate Attention (Alert status), and Recent Submissions (last 7 days)",
-      "reqIds": [
-        "REQ-6"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-csv-export-functionality-that-exports-all-filtered-user-assessment-data-to-a-downloadable-csv-file-with-all-visible-columns",
-      "title": "Add CSV export functionality that exports all filtered User Assessment Data to a downloadable CSV file with all visible columns",
-      "reqIds": [
-        "REQ-7"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-admindashboardpage-tsx-to-replace-placeholder-content-with-the-new-user-assessment-data-table-quick-stats-cards-and-export-functionality-components",
-      "title": "Update AdminDashboardPage.tsx to replace placeholder content with the new User Assessment Data Table, Quick Stats Cards, and Export functionality components",
-      "reqIds": [
-        "REQ-9"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-create-react-query-hook-useadminassessments-in-usequeries-ts-for-fetching-all-wellness-reports-data-with-automatic-refetching-and-caching",
-      "title": "Create React Query hook useAdminAssessments in useQueries.ts for fetching all wellness reports data with automatic refetching and caching",
-      "reqIds": [
-        "REQ-10"
       ],
       "version": 1
     }
@@ -86,32 +23,20 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "User Assessment Data Table with search, filter, sorting, and pagination",
+      "summary": "Fix admin button in footer to directly link to admin dashboard without authentication",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Quick Stats Cards showing total assessments, average score, alert users, and recent submissions",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-3",
-      "summary": "Basic CSV export functionality for assessment data",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-11",
-      "summary": "Add backend query function getAllWellnessReports() in main.mo that returns all stored wellness reports with user basic info, timestamps, and calculated scores",
+      "summary": "Update the admin button in the ContactFooter component to navigate directly to the admin dashboard page (/admin) without requiring authentication or authorization checks",
       "reqIds": [
-        "REQ-8"
+        "REQ-1"
       ],
       "status": "pending"
     }
   ],
-  "projectName": "ABL Pulse Admin",
+  "projectName": "ABL Pulse",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }
