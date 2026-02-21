@@ -1,11 +1,12 @@
+// This module defines the backend implementation for managing assessment and wellness reports.
+// It includes type definitions, persistent storage, and core functions for handling user data.
+
 import Time "mo:core/Time";
 import Map "mo:core/Map";
 import Nat "mo:core/Nat";
 import Text "mo:core/Text";
 import Array "mo:core/Array";
 import Runtime "mo:core/Runtime";
-
-
 
 actor {
   // Unique IDs for sections
@@ -298,4 +299,3 @@ actor {
   // Variable to store previous persistent adminEmails map.
   var adminEmails : Map.Map<Text, Bool> = Map.empty<Text, Bool>();
 };
-

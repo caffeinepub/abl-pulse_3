@@ -1,12 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Remove authentication requirements and create a basic admin welcome page with direct access.
+**Goal:** Create comprehensive documentation explaining the backend folder structure, data models, functions, and component interactions for Assessment and Wellness Reports.
 
 **Planned changes:**
-- Remove all Internet Identity authentication logic from the admin login page
-- Transform admin dashboard into a simple welcome page displaying "Welcome Admin"
-- Update Admin button in footer to navigate directly to admin dashboard without authentication
-- Remove or bypass admin authentication checks that validate admin access
+- Document all backend folders related to wellness reports with their purposes and functions
+- Document data models (SectionId, SectionScores, MedicalHistory, UserAnswers, SolutionTip, CompleteWellnessReport) with field descriptions and relationships
+- Document available backend functions and API endpoints with signatures, purposes, and usage examples
+- Create a structured outline showing data flow and component interactions from user input to report generation and storage
+- Provide documentation in both English and Hindi
 
-**User-visible outcome:** Users can click the Admin button in the footer and immediately access a basic "Welcome Admin" dashboard page without any login or authentication process.
+**User-visible outcome:** Users will have clear documentation explaining how the backend handles Assessment and Wellness Reports, including folder structure, data models, available functions, and the complete data flow process.

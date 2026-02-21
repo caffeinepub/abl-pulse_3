@@ -1,72 +1,54 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-21T21:50:52.660Z",
+  "generatedAt": "2026-02-21T22:07:08.592Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
     "total": 4,
-    "implemented": 4,
+    "implemented": 0,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Remove all Internet Identity authentication logic from the AdminLoginPage component, including the login button, authentication flow, and email verification",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/AdminLoginPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/AdminLoginPage.tsx"
-        ]
+        "summary": "Create comprehensive documentation explaining the backend folder structure related to Assessment and Wellness Reports, including the purpose and function of each folder and file",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       },
       {
         "id": "REQ-2",
-        "summary": "Transform the AdminDashboardPage into a simple welcome page displaying 'Welcome Admin' as the main heading with minimal dashboard layout",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/AdminDashboardPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/AdminDashboardPage.tsx"
-        ]
+        "summary": "Document the data models used for Assessment and Wellness Reports, including SectionId, SectionScores, MedicalHistory, UserAnswers, SolutionTip, and CompleteWellnessReport types",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       },
       {
         "id": "REQ-3",
-        "summary": "Update the Admin button in the ContactFooter component to navigate directly to the admin dashboard page without any authentication checks or intermediate login screen",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/ContactFooter.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/ContactFooter.tsx"
-        ]
+        "summary": "Document available backend functions and API endpoints for wellness reports, including storage operations, ID generation, and data retrieval methods",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       },
       {
         "id": "REQ-4",
-        "summary": "Remove or bypass the admin authentication hook (useQueries checkAdminUser) that validates admin access, ensuring the admin page loads without backend permission checks",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/AdminDashboardPage.tsx",
-          "frontend/src/App.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/AdminDashboardPage.tsx",
-          "frontend/src/App.tsx"
-        ]
+        "summary": "Create a visual representation or structured outline showing how the backend components interact to generate and store wellness reports",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
-    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/components/ContactFooter.tsx",
-    "frontend/src/pages/AdminDashboardPage.tsx",
-    "frontend/src/pages/AdminLoginPage.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

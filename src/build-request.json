@@ -1,93 +1,83 @@
 {
   "kind": "build_request",
-  "title": "Remove authentication and create basic admin welcome page",
+  "title": "Document Backend Folder Structure for Assessment Wellness Reports",
   "projectName": "ABL Pulse",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Remove all Internet Identity authentication logic from the AdminLoginPage component, including the login button, authentication flow, and email verification",
-      "target": "frontend",
+      "text": "Create comprehensive documentation explaining the backend folder structure related to Assessment and Wellness Reports, including the purpose and function of each folder and file",
+      "target": "backend",
       "source": {
         "messageIds": [
           "msg-latest"
         ],
         "quotes": [
-          "direct access बिना authentication"
+          "Mujhe Assessment Wellness Report se related Backend me bane folders or uske kya function hai use dijiye"
         ]
       },
       "acceptanceCriteria": [
-        "Internet Identity login button is removed from the admin page",
-        "No authentication checks occur when accessing the admin area",
-        "All Internet Identity related UI elements are removed from the admin login page"
+        "Documentation lists all backend folders related to wellness reports",
+        "Each folder's purpose and function is clearly explained",
+        "Key files within folders are identified with their roles",
+        "Documentation is provided in both English and Hindi"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Transform the AdminDashboardPage into a simple welcome page displaying 'Welcome Admin' as the main heading with minimal dashboard layout",
-      "target": "frontend",
+      "text": "Document the data models used for Assessment and Wellness Reports, including SectionId, SectionScores, MedicalHistory, UserAnswers, SolutionTip, and CompleteWellnessReport types",
+      "target": "backend",
       "source": {
         "messageIds": [
           "msg-latest"
-        ],
-        "quotes": [
-          "basic welcome page होगा ( \"Welcome Admin\" dashboard)"
         ]
       },
       "acceptanceCriteria": [
-        "Page displays 'Welcome Admin' as the primary heading",
-        "Clean, simple dashboard layout with no complex functionality",
-        "Page is accessible without any authentication requirements"
+        "All data types are documented with their fields and purposes",
+        "Relationships between data models are explained",
+        "Validation functions for answers and scores are documented"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Update the Admin button in the ContactFooter component to navigate directly to the admin dashboard page without any authentication checks or intermediate login screen",
-      "target": "frontend",
+      "text": "Document available backend functions and API endpoints for wellness reports, including storage operations, ID generation, and data retrieval methods",
+      "target": "backend",
       "source": {
         "messageIds": [
           "msg-latest"
-        ],
-        "quotes": [
-          "direct access बिना authentication",
-          "Admin button पर click करते ही Admin page खुल जाएगा"
         ]
       },
       "acceptanceCriteria": [
-        "Clicking the Admin button in the footer immediately opens the admin dashboard",
-        "No login page or authentication prompt appears",
-        "Navigation works seamlessly from any page in the application"
+        "All public functions are listed with their signatures",
+        "Function purposes and return types are documented",
+        "Usage examples are provided where applicable"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Remove or bypass the admin authentication hook (useQueries checkAdminUser) that validates admin access, ensuring the admin page loads without backend permission checks",
-      "target": "frontend",
+      "text": "Create a visual representation or structured outline showing how the backend components interact to generate and store wellness reports",
+      "target": "backend",
       "source": {
         "messageIds": [
           "msg-latest"
-        ],
-        "quotes": [
-          "verification logic ko remove kare"
         ]
       },
       "acceptanceCriteria": [
-        "Admin page loads without calling backend admin verification",
-        "No permission denied errors occur",
-        "Page renders immediately without authentication state checks"
+        "Data flow from user input to report generation is documented",
+        "Storage and retrieval processes are explained",
+        "Component interactions are clearly illustrated"
       ]
     }
   ],
   "constraints": [
-    "Do not modify the backend main.mo file",
-    "Do not change the ContactFooter component structure beyond the Admin button navigation logic",
-    "Preserve all other navigation and routing functionality"
+    "Documentation must be based on the actual backend/main.mo implementation",
+    "Do not modify existing backend code structure",
+    "Keep documentation accessible to both technical and non-technical users"
   ],
   "nonGoals": [
-    "Implementing any ABL Pulse specific features or content (deferred to next step)",
-    "Adding new authentication mechanisms",
-    "Modifying the backend actor or API endpoints",
-    "Changing the design or styling of the admin page beyond basic welcome layout"
+    "Modifying the existing backend functionality",
+    "Adding new backend features",
+    "Creating new data models or API endpoints"
   ],
   "imageRequirements": {
     "required": [],
