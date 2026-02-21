@@ -8,6 +8,8 @@ import Section4 from './pages/Section4';
 import ScoreSummaryPage from './pages/ScoreSummaryPage';
 import RecommendedServicesPage from './pages/RecommendedServicesPage';
 import WellnessProfilePage from './pages/WellnessProfilePage';
+import ResultsPage from './pages/ResultsPage';
+import TestModePage from './pages/TestModePage';
 import { LoadingScreen } from './components/LoadingScreen';
 import { AssessmentProvider } from './contexts/AssessmentContext';
 
@@ -74,6 +76,18 @@ const wellnessProfileRoute = createRoute({
   component: WellnessProfilePage,
 });
 
+const resultsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/results',
+  component: ResultsPage,
+});
+
+const testModeRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/test-mode',
+  component: TestModePage,
+});
+
 const recommendationsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/recommendations',
@@ -97,6 +111,8 @@ const routeTree = rootRoute.addChildren([
   scoreSummaryRoute,
   recommendedServicesRoute,
   wellnessProfileRoute,
+  resultsRoute,
+  testModeRoute,
   recommendationsRoute,
 ]);
 

@@ -89,10 +89,660 @@ export class ExternalBlob {
         return this;
     }
 }
-export interface backendInterface {
+export type Time = bigint;
+export interface SolutionTip {
+    medicalFitForHeartProblems: boolean;
+    medicalFitForThyroid: boolean;
+    medicalFitForHighBMI: boolean;
+    text: string;
+    section: SectionId;
+    costLevel: Variant_low_high_medium;
+    timeCommitment: Variant_long_short_medium;
+    medicalFitForAlcoholUse: boolean;
+    medicalFitForAnemia: boolean;
+    severity: Variant_low_high_medium;
+    medicalFitForKidney: boolean;
+    medicalFitForPregnancy: boolean;
+    medicalFitForBloodPressure: boolean;
+    medicalRisk: Variant_low_high_none;
+    medicalFitForCholesterol: boolean;
+    suitability: Variant_all_elderly_pregnant_youth;
+    medicalFitForSugar: boolean;
 }
+export interface SectionScores {
+    diet: bigint;
+    exercise: bigint;
+    sleep: bigint;
+    hydration: bigint;
+}
+export interface MedicalHistory {
+    hasProblemsWithPregnancy: boolean;
+    hasProblemsWithAlcoholUse: boolean;
+    hasProblemsWithCholesterol: boolean;
+    hasProblemsWithAnemia: boolean;
+    hasProblemsWithBloodPressure: boolean;
+    hasProblemsWithKidney: boolean;
+    hasProblemsWithSugar: boolean;
+    hasProblemsWithHeartProblems: boolean;
+    hasProblemsWithThyroid: boolean;
+    hasProblemsWithHighBMI: boolean;
+}
+export interface CompleteWellnessReport {
+    recommendations: Array<SolutionTip>;
+    scores: SectionScores;
+    problems: Array<string>;
+    timestamp: Time;
+    healthProfile: {
+        answers: UserAnswers;
+        medicalHistory: MedicalHistory;
+    };
+}
+export interface UserAnswers {
+    diet: Array<bigint>;
+    exercise: Array<bigint>;
+    sleep: Array<bigint>;
+    hydration: Array<bigint>;
+}
+export enum SectionId {
+    diet = "diet",
+    exercise = "exercise",
+    sleep = "sleep",
+    hydration = "hydration"
+}
+export enum Variant_all_elderly_pregnant_youth {
+    all = "all",
+    elderly = "elderly",
+    pregnant = "pregnant",
+    youth = "youth"
+}
+export enum Variant_long_short_medium {
+    long_ = "long",
+    short_ = "short",
+    medium = "medium"
+}
+export enum Variant_low_high_medium {
+    low = "low",
+    high = "high",
+    medium = "medium"
+}
+export enum Variant_low_high_none {
+    low = "low",
+    high = "high",
+    none = "none"
+}
+export interface backendInterface {
+    getAllSections(): Promise<Array<SectionId>>;
+    getAllWellnessReports(): Promise<Array<[bigint, CompleteWellnessReport]>>;
+    getSectionScoringDetails(): Promise<{
+        questionPoints: Array<[SectionId, Array<bigint>]>;
+        scoringReference: Array<[bigint, string]>;
+        sectionEndQuestion: Array<[SectionId, bigint]>;
+        sectionStartQuestion: Array<[SectionId, bigint]>;
+    }>;
+    getTestData(): Promise<[SectionScores, SectionScores, SectionScores, MedicalHistory, MedicalHistory, MedicalHistory]>;
+    getWellnessReportById(id: bigint): Promise<CompleteWellnessReport | null>;
+    saveWellnessReport(report: CompleteWellnessReport): Promise<bigint>;
+    validateMedicalHistory(medicalHistory: MedicalHistory): Promise<MedicalHistory>;
+}
+import type { CompleteWellnessReport as _CompleteWellnessReport, MedicalHistory as _MedicalHistory, SectionId as _SectionId, SectionScores as _SectionScores, SolutionTip as _SolutionTip, Time as _Time, UserAnswers as _UserAnswers } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
+    async getAllSections(): Promise<Array<SectionId>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllSections();
+                return from_candid_vec_n1(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllSections();
+            return from_candid_vec_n1(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getAllWellnessReports(): Promise<Array<[bigint, CompleteWellnessReport]>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllWellnessReports();
+                return from_candid_vec_n4(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllWellnessReports();
+            return from_candid_vec_n4(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getSectionScoringDetails(): Promise<{
+        questionPoints: Array<[SectionId, Array<bigint>]>;
+        scoringReference: Array<[bigint, string]>;
+        sectionEndQuestion: Array<[SectionId, bigint]>;
+        sectionStartQuestion: Array<[SectionId, bigint]>;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getSectionScoringDetails();
+                return from_candid_record_n15(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getSectionScoringDetails();
+            return from_candid_record_n15(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getTestData(): Promise<[SectionScores, SectionScores, SectionScores, MedicalHistory, MedicalHistory, MedicalHistory]> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getTestData();
+                return [
+                    result[0],
+                    result[1],
+                    result[2],
+                    result[3],
+                    result[4],
+                    result[5]
+                ];
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getTestData();
+            return [
+                result[0],
+                result[1],
+                result[2],
+                result[3],
+                result[4],
+                result[5]
+            ];
+        }
+    }
+    async getWellnessReportById(arg0: bigint): Promise<CompleteWellnessReport | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getWellnessReportById(arg0);
+                return from_candid_opt_n20(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getWellnessReportById(arg0);
+            return from_candid_opt_n20(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async saveWellnessReport(arg0: CompleteWellnessReport): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.saveWellnessReport(to_candid_CompleteWellnessReport_n21(this._uploadFile, this._downloadFile, arg0));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.saveWellnessReport(to_candid_CompleteWellnessReport_n21(this._uploadFile, this._downloadFile, arg0));
+            return result;
+        }
+    }
+    async validateMedicalHistory(arg0: MedicalHistory): Promise<MedicalHistory> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.validateMedicalHistory(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.validateMedicalHistory(arg0);
+            return result;
+        }
+    }
+}
+function from_candid_CompleteWellnessReport_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _CompleteWellnessReport): CompleteWellnessReport {
+    return from_candid_record_n7(_uploadFile, _downloadFile, value);
+}
+function from_candid_SectionId_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _SectionId): SectionId {
+    return from_candid_variant_n3(_uploadFile, _downloadFile, value);
+}
+function from_candid_SolutionTip_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _SolutionTip): SolutionTip {
+    return from_candid_record_n10(_uploadFile, _downloadFile, value);
+}
+function from_candid_opt_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_CompleteWellnessReport]): CompleteWellnessReport | null {
+    return value.length === 0 ? null : from_candid_CompleteWellnessReport_n6(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_record_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    medicalFitForHeartProblems: boolean;
+    medicalFitForThyroid: boolean;
+    medicalFitForHighBMI: boolean;
+    text: string;
+    section: _SectionId;
+    costLevel: {
+        low: null;
+    } | {
+        high: null;
+    } | {
+        medium: null;
+    };
+    timeCommitment: {
+        long: null;
+    } | {
+        short: null;
+    } | {
+        medium: null;
+    };
+    medicalFitForAlcoholUse: boolean;
+    medicalFitForAnemia: boolean;
+    severity: {
+        low: null;
+    } | {
+        high: null;
+    } | {
+        medium: null;
+    };
+    medicalFitForKidney: boolean;
+    medicalFitForPregnancy: boolean;
+    medicalFitForBloodPressure: boolean;
+    medicalRisk: {
+        low: null;
+    } | {
+        high: null;
+    } | {
+        none: null;
+    };
+    medicalFitForCholesterol: boolean;
+    suitability: {
+        all: null;
+    } | {
+        elderly: null;
+    } | {
+        pregnant: null;
+    } | {
+        youth: null;
+    };
+    medicalFitForSugar: boolean;
+}): {
+    medicalFitForHeartProblems: boolean;
+    medicalFitForThyroid: boolean;
+    medicalFitForHighBMI: boolean;
+    text: string;
+    section: SectionId;
+    costLevel: Variant_low_high_medium;
+    timeCommitment: Variant_long_short_medium;
+    medicalFitForAlcoholUse: boolean;
+    medicalFitForAnemia: boolean;
+    severity: Variant_low_high_medium;
+    medicalFitForKidney: boolean;
+    medicalFitForPregnancy: boolean;
+    medicalFitForBloodPressure: boolean;
+    medicalRisk: Variant_low_high_none;
+    medicalFitForCholesterol: boolean;
+    suitability: Variant_all_elderly_pregnant_youth;
+    medicalFitForSugar: boolean;
+} {
+    return {
+        medicalFitForHeartProblems: value.medicalFitForHeartProblems,
+        medicalFitForThyroid: value.medicalFitForThyroid,
+        medicalFitForHighBMI: value.medicalFitForHighBMI,
+        text: value.text,
+        section: from_candid_SectionId_n2(_uploadFile, _downloadFile, value.section),
+        costLevel: from_candid_variant_n11(_uploadFile, _downloadFile, value.costLevel),
+        timeCommitment: from_candid_variant_n12(_uploadFile, _downloadFile, value.timeCommitment),
+        medicalFitForAlcoholUse: value.medicalFitForAlcoholUse,
+        medicalFitForAnemia: value.medicalFitForAnemia,
+        severity: from_candid_variant_n11(_uploadFile, _downloadFile, value.severity),
+        medicalFitForKidney: value.medicalFitForKidney,
+        medicalFitForPregnancy: value.medicalFitForPregnancy,
+        medicalFitForBloodPressure: value.medicalFitForBloodPressure,
+        medicalRisk: from_candid_variant_n13(_uploadFile, _downloadFile, value.medicalRisk),
+        medicalFitForCholesterol: value.medicalFitForCholesterol,
+        suitability: from_candid_variant_n14(_uploadFile, _downloadFile, value.suitability),
+        medicalFitForSugar: value.medicalFitForSugar
+    };
+}
+function from_candid_record_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    questionPoints: Array<[_SectionId, Array<bigint>]>;
+    scoringReference: Array<[bigint, string]>;
+    sectionEndQuestion: Array<[_SectionId, bigint]>;
+    sectionStartQuestion: Array<[_SectionId, bigint]>;
+}): {
+    questionPoints: Array<[SectionId, Array<bigint>]>;
+    scoringReference: Array<[bigint, string]>;
+    sectionEndQuestion: Array<[SectionId, bigint]>;
+    sectionStartQuestion: Array<[SectionId, bigint]>;
+} {
+    return {
+        questionPoints: from_candid_vec_n16(_uploadFile, _downloadFile, value.questionPoints),
+        scoringReference: value.scoringReference,
+        sectionEndQuestion: from_candid_vec_n18(_uploadFile, _downloadFile, value.sectionEndQuestion),
+        sectionStartQuestion: from_candid_vec_n18(_uploadFile, _downloadFile, value.sectionStartQuestion)
+    };
+}
+function from_candid_record_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    recommendations: Array<_SolutionTip>;
+    scores: _SectionScores;
+    problems: Array<string>;
+    timestamp: _Time;
+    healthProfile: {
+        answers: _UserAnswers;
+        medicalHistory: _MedicalHistory;
+    };
+}): {
+    recommendations: Array<SolutionTip>;
+    scores: SectionScores;
+    problems: Array<string>;
+    timestamp: Time;
+    healthProfile: {
+        answers: UserAnswers;
+        medicalHistory: MedicalHistory;
+    };
+} {
+    return {
+        recommendations: from_candid_vec_n8(_uploadFile, _downloadFile, value.recommendations),
+        scores: value.scores,
+        problems: value.problems,
+        timestamp: value.timestamp,
+        healthProfile: value.healthProfile
+    };
+}
+function from_candid_tuple_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [_SectionId, Array<bigint>]): [SectionId, Array<bigint>] {
+    return [
+        from_candid_SectionId_n2(_uploadFile, _downloadFile, value[0]),
+        value[1]
+    ];
+}
+function from_candid_tuple_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [_SectionId, bigint]): [SectionId, bigint] {
+    return [
+        from_candid_SectionId_n2(_uploadFile, _downloadFile, value[0]),
+        value[1]
+    ];
+}
+function from_candid_tuple_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [bigint, _CompleteWellnessReport]): [bigint, CompleteWellnessReport] {
+    return [
+        value[0],
+        from_candid_CompleteWellnessReport_n6(_uploadFile, _downloadFile, value[1])
+    ];
+}
+function from_candid_variant_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    low: null;
+} | {
+    high: null;
+} | {
+    medium: null;
+}): Variant_low_high_medium {
+    return "low" in value ? Variant_low_high_medium.low : "high" in value ? Variant_low_high_medium.high : "medium" in value ? Variant_low_high_medium.medium : value;
+}
+function from_candid_variant_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    long: null;
+} | {
+    short: null;
+} | {
+    medium: null;
+}): Variant_long_short_medium {
+    return "long" in value ? Variant_long_short_medium.long : "short" in value ? Variant_long_short_medium.short : "medium" in value ? Variant_long_short_medium.medium : value;
+}
+function from_candid_variant_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    low: null;
+} | {
+    high: null;
+} | {
+    none: null;
+}): Variant_low_high_none {
+    return "low" in value ? Variant_low_high_none.low : "high" in value ? Variant_low_high_none.high : "none" in value ? Variant_low_high_none.none : value;
+}
+function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    all: null;
+} | {
+    elderly: null;
+} | {
+    pregnant: null;
+} | {
+    youth: null;
+}): Variant_all_elderly_pregnant_youth {
+    return "all" in value ? Variant_all_elderly_pregnant_youth.all : "elderly" in value ? Variant_all_elderly_pregnant_youth.elderly : "pregnant" in value ? Variant_all_elderly_pregnant_youth.pregnant : "youth" in value ? Variant_all_elderly_pregnant_youth.youth : value;
+}
+function from_candid_variant_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    diet: null;
+} | {
+    exercise: null;
+} | {
+    sleep: null;
+} | {
+    hydration: null;
+}): SectionId {
+    return "diet" in value ? SectionId.diet : "exercise" in value ? SectionId.exercise : "sleep" in value ? SectionId.sleep : "hydration" in value ? SectionId.hydration : value;
+}
+function from_candid_vec_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_SectionId>): Array<SectionId> {
+    return value.map((x)=>from_candid_SectionId_n2(_uploadFile, _downloadFile, x));
+}
+function from_candid_vec_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<[_SectionId, Array<bigint>]>): Array<[SectionId, Array<bigint>]> {
+    return value.map((x)=>from_candid_tuple_n17(_uploadFile, _downloadFile, x));
+}
+function from_candid_vec_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<[_SectionId, bigint]>): Array<[SectionId, bigint]> {
+    return value.map((x)=>from_candid_tuple_n19(_uploadFile, _downloadFile, x));
+}
+function from_candid_vec_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<[bigint, _CompleteWellnessReport]>): Array<[bigint, CompleteWellnessReport]> {
+    return value.map((x)=>from_candid_tuple_n5(_uploadFile, _downloadFile, x));
+}
+function from_candid_vec_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_SolutionTip>): Array<SolutionTip> {
+    return value.map((x)=>from_candid_SolutionTip_n9(_uploadFile, _downloadFile, x));
+}
+function to_candid_CompleteWellnessReport_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: CompleteWellnessReport): _CompleteWellnessReport {
+    return to_candid_record_n22(_uploadFile, _downloadFile, value);
+}
+function to_candid_SectionId_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SectionId): _SectionId {
+    return to_candid_variant_n27(_uploadFile, _downloadFile, value);
+}
+function to_candid_SolutionTip_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SolutionTip): _SolutionTip {
+    return to_candid_record_n25(_uploadFile, _downloadFile, value);
+}
+function to_candid_record_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    recommendations: Array<SolutionTip>;
+    scores: SectionScores;
+    problems: Array<string>;
+    timestamp: Time;
+    healthProfile: {
+        answers: UserAnswers;
+        medicalHistory: MedicalHistory;
+    };
+}): {
+    recommendations: Array<_SolutionTip>;
+    scores: _SectionScores;
+    problems: Array<string>;
+    timestamp: _Time;
+    healthProfile: {
+        answers: _UserAnswers;
+        medicalHistory: _MedicalHistory;
+    };
+} {
+    return {
+        recommendations: to_candid_vec_n23(_uploadFile, _downloadFile, value.recommendations),
+        scores: value.scores,
+        problems: value.problems,
+        timestamp: value.timestamp,
+        healthProfile: value.healthProfile
+    };
+}
+function to_candid_record_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    medicalFitForHeartProblems: boolean;
+    medicalFitForThyroid: boolean;
+    medicalFitForHighBMI: boolean;
+    text: string;
+    section: SectionId;
+    costLevel: Variant_low_high_medium;
+    timeCommitment: Variant_long_short_medium;
+    medicalFitForAlcoholUse: boolean;
+    medicalFitForAnemia: boolean;
+    severity: Variant_low_high_medium;
+    medicalFitForKidney: boolean;
+    medicalFitForPregnancy: boolean;
+    medicalFitForBloodPressure: boolean;
+    medicalRisk: Variant_low_high_none;
+    medicalFitForCholesterol: boolean;
+    suitability: Variant_all_elderly_pregnant_youth;
+    medicalFitForSugar: boolean;
+}): {
+    medicalFitForHeartProblems: boolean;
+    medicalFitForThyroid: boolean;
+    medicalFitForHighBMI: boolean;
+    text: string;
+    section: _SectionId;
+    costLevel: {
+        low: null;
+    } | {
+        high: null;
+    } | {
+        medium: null;
+    };
+    timeCommitment: {
+        long: null;
+    } | {
+        short: null;
+    } | {
+        medium: null;
+    };
+    medicalFitForAlcoholUse: boolean;
+    medicalFitForAnemia: boolean;
+    severity: {
+        low: null;
+    } | {
+        high: null;
+    } | {
+        medium: null;
+    };
+    medicalFitForKidney: boolean;
+    medicalFitForPregnancy: boolean;
+    medicalFitForBloodPressure: boolean;
+    medicalRisk: {
+        low: null;
+    } | {
+        high: null;
+    } | {
+        none: null;
+    };
+    medicalFitForCholesterol: boolean;
+    suitability: {
+        all: null;
+    } | {
+        elderly: null;
+    } | {
+        pregnant: null;
+    } | {
+        youth: null;
+    };
+    medicalFitForSugar: boolean;
+} {
+    return {
+        medicalFitForHeartProblems: value.medicalFitForHeartProblems,
+        medicalFitForThyroid: value.medicalFitForThyroid,
+        medicalFitForHighBMI: value.medicalFitForHighBMI,
+        text: value.text,
+        section: to_candid_SectionId_n26(_uploadFile, _downloadFile, value.section),
+        costLevel: to_candid_variant_n28(_uploadFile, _downloadFile, value.costLevel),
+        timeCommitment: to_candid_variant_n29(_uploadFile, _downloadFile, value.timeCommitment),
+        medicalFitForAlcoholUse: value.medicalFitForAlcoholUse,
+        medicalFitForAnemia: value.medicalFitForAnemia,
+        severity: to_candid_variant_n28(_uploadFile, _downloadFile, value.severity),
+        medicalFitForKidney: value.medicalFitForKidney,
+        medicalFitForPregnancy: value.medicalFitForPregnancy,
+        medicalFitForBloodPressure: value.medicalFitForBloodPressure,
+        medicalRisk: to_candid_variant_n30(_uploadFile, _downloadFile, value.medicalRisk),
+        medicalFitForCholesterol: value.medicalFitForCholesterol,
+        suitability: to_candid_variant_n31(_uploadFile, _downloadFile, value.suitability),
+        medicalFitForSugar: value.medicalFitForSugar
+    };
+}
+function to_candid_variant_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SectionId): {
+    diet: null;
+} | {
+    exercise: null;
+} | {
+    sleep: null;
+} | {
+    hydration: null;
+} {
+    return value == SectionId.diet ? {
+        diet: null
+    } : value == SectionId.exercise ? {
+        exercise: null
+    } : value == SectionId.sleep ? {
+        sleep: null
+    } : value == SectionId.hydration ? {
+        hydration: null
+    } : value;
+}
+function to_candid_variant_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Variant_low_high_medium): {
+    low: null;
+} | {
+    high: null;
+} | {
+    medium: null;
+} {
+    return value == Variant_low_high_medium.low ? {
+        low: null
+    } : value == Variant_low_high_medium.high ? {
+        high: null
+    } : value == Variant_low_high_medium.medium ? {
+        medium: null
+    } : value;
+}
+function to_candid_variant_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Variant_long_short_medium): {
+    long: null;
+} | {
+    short: null;
+} | {
+    medium: null;
+} {
+    return value == Variant_long_short_medium.long ? {
+        long_: null
+    } : value == Variant_long_short_medium.short ? {
+        short_: null
+    } : value == Variant_long_short_medium.medium ? {
+        medium: null
+    } : value;
+}
+function to_candid_variant_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Variant_low_high_none): {
+    low: null;
+} | {
+    high: null;
+} | {
+    none: null;
+} {
+    return value == Variant_low_high_none.low ? {
+        low: null
+    } : value == Variant_low_high_none.high ? {
+        high: null
+    } : value == Variant_low_high_none.none ? {
+        none: null
+    } : value;
+}
+function to_candid_variant_n31(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Variant_all_elderly_pregnant_youth): {
+    all: null;
+} | {
+    elderly: null;
+} | {
+    pregnant: null;
+} | {
+    youth: null;
+} {
+    return value == Variant_all_elderly_pregnant_youth.all ? {
+        all: null
+    } : value == Variant_all_elderly_pregnant_youth.elderly ? {
+        elderly: null
+    } : value == Variant_all_elderly_pregnant_youth.pregnant ? {
+        pregnant: null
+    } : value == Variant_all_elderly_pregnant_youth.youth ? {
+        youth: null
+    } : value;
+}
+function to_candid_vec_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<SolutionTip>): Array<_SolutionTip> {
+    return value.map((x)=>to_candid_SolutionTip_n24(_uploadFile, _downloadFile, x));
 }
 export interface CreateActorOptions {
     agent?: Agent;

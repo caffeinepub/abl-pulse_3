@@ -10,7 +10,108 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
-export interface _SERVICE {}
+export interface CompleteWellnessReport {
+  'recommendations' : Array<SolutionTip>,
+  'scores' : SectionScores,
+  'problems' : Array<string>,
+  'timestamp' : Time,
+  'healthProfile' : {
+    'answers' : UserAnswers,
+    'medicalHistory' : MedicalHistory,
+  },
+}
+export interface MedicalHistory {
+  'hasProblemsWithPregnancy' : boolean,
+  'hasProblemsWithAlcoholUse' : boolean,
+  'hasProblemsWithCholesterol' : boolean,
+  'hasProblemsWithAnemia' : boolean,
+  'hasProblemsWithBloodPressure' : boolean,
+  'hasProblemsWithKidney' : boolean,
+  'hasProblemsWithSugar' : boolean,
+  'hasProblemsWithHeartProblems' : boolean,
+  'hasProblemsWithThyroid' : boolean,
+  'hasProblemsWithHighBMI' : boolean,
+}
+export type SectionId = { 'diet' : null } |
+  { 'exercise' : null } |
+  { 'sleep' : null } |
+  { 'hydration' : null };
+export interface SectionScores {
+  'diet' : bigint,
+  'exercise' : bigint,
+  'sleep' : bigint,
+  'hydration' : bigint,
+}
+export interface SolutionTip {
+  'medicalFitForHeartProblems' : boolean,
+  'medicalFitForThyroid' : boolean,
+  'medicalFitForHighBMI' : boolean,
+  'text' : string,
+  'section' : SectionId,
+  'costLevel' : { 'low' : null } |
+    { 'high' : null } |
+    { 'medium' : null },
+  'timeCommitment' : { 'long' : null } |
+    { 'short' : null } |
+    { 'medium' : null },
+  'medicalFitForAlcoholUse' : boolean,
+  'medicalFitForAnemia' : boolean,
+  'severity' : { 'low' : null } |
+    { 'high' : null } |
+    { 'medium' : null },
+  'medicalFitForKidney' : boolean,
+  'medicalFitForPregnancy' : boolean,
+  'medicalFitForBloodPressure' : boolean,
+  'medicalRisk' : { 'low' : null } |
+    { 'high' : null } |
+    { 'none' : null },
+  'medicalFitForCholesterol' : boolean,
+  'suitability' : { 'all' : null } |
+    { 'elderly' : null } |
+    { 'pregnant' : null } |
+    { 'youth' : null },
+  'medicalFitForSugar' : boolean,
+}
+export type Time = bigint;
+export interface UserAnswers {
+  'diet' : Array<bigint>,
+  'exercise' : Array<bigint>,
+  'sleep' : Array<bigint>,
+  'hydration' : Array<bigint>,
+}
+export interface _SERVICE {
+  'getAllSections' : ActorMethod<[], Array<SectionId>>,
+  'getAllWellnessReports' : ActorMethod<
+    [],
+    Array<[bigint, CompleteWellnessReport]>
+  >,
+  'getSectionScoringDetails' : ActorMethod<
+    [],
+    {
+      'questionPoints' : Array<[SectionId, Array<bigint>]>,
+      'scoringReference' : Array<[bigint, string]>,
+      'sectionEndQuestion' : Array<[SectionId, bigint]>,
+      'sectionStartQuestion' : Array<[SectionId, bigint]>,
+    }
+  >,
+  'getTestData' : ActorMethod<
+    [],
+    [
+      SectionScores,
+      SectionScores,
+      SectionScores,
+      MedicalHistory,
+      MedicalHistory,
+      MedicalHistory,
+    ]
+  >,
+  'getWellnessReportById' : ActorMethod<
+    [bigint],
+    [] | [CompleteWellnessReport]
+  >,
+  'saveWellnessReport' : ActorMethod<[CompleteWellnessReport], bigint>,
+  'validateMedicalHistory' : ActorMethod<[MedicalHistory], MedicalHistory>,
+}
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];
 export declare const idlFactory: IDL.InterfaceFactory;

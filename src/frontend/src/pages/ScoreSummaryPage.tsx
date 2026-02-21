@@ -1,113 +1,114 @@
-import { useNavigate } from '@tanstack/react-router';
-import { ArrowLeft, User } from 'lucide-react';
-import { useBasicInfoStorage } from '../hooks/useBasicInfoStorage';
+import { useEffect } from 'react';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useAssessment } from '../contexts/AssessmentContext';
-import { getSectionScores, getSectionCategory, getCategoryTopBorderColor } from '../utils/scoringUtils';
-import { Button } from '../components/ui/button';
-import { Card } from '../components/ui/card';
+import { useBasicInfoStorage } from '../hooks/useBasicInfoStorage';
+import { calculateScores, getSectionCategory, getSectionCategoryLabel, getCategoryTopBorderColor } from '../utils/scoringUtils';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 export default function ScoreSummaryPage() {
   const navigate = useNavigate();
+  const { responses, language } = useAssessment();
   const { getBasicInfo } = useBasicInfoStorage();
-  const { responses } = useAssessment();
+
+  useEffect(() => {
+    // Check if all 40 responses are complete
+    const allAnswered = Object.values(responses).every(r => r !== null && r !== undefined);
+    if (!allAnswered) {
+      navigate({ to: '/assessment/section1' });
+    }
+  }, [responses, navigate]);
+
   const basicInfo = getBasicInfo();
-  const sectionScores = getSectionScores(responses);
+  const scores = calculateScores(responses);
 
-  const formatDate = () => {
-    const date = new Date();
-    const day = date.getDate();
-    const month = date.toLocaleString('en-US', { month: 'short' });
-    const year = date.getFullYear();
-    return `${day} ${month} ${year}`;
-  };
-
-  const handleBack = () => {
-    navigate({ to: '/assessment/section4' });
-  };
-
-  const handleViewRecommendations = () => {
-    navigate({ to: '/recommended-services' });
-  };
+  const sectionData = [
+    { number: 1, title: 'Sleep & Hydration', score: scores.section1 },
+    { number: 2, title: 'Gut Cleanse', score: scores.section2 },
+    { number: 3, title: 'Movement & Breath', score: scores.section3 },
+    { number: 4, title: 'Nutrition & Fuel', score: scores.section4 },
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-bg via-white to-brand-bg/50 px-4 py-8">
-      <div className="mx-auto max-w-4xl">
-        {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            onClick={handleBack}
-            className="flex items-center gap-2 text-brand-text hover:text-brand-primary"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            <span className="font-semibold">LAST PAGE</span>
-          </Button>
-          <span className="text-sm font-medium text-brand-text/70">{formatDate()}</span>
+    <div className="min-h-screen bg-[#FAF7F2]">
+      {/* Header */}
+      <header className="bg-white shadow-sm sticky top-0 z-10">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2 text-[#2D5F3F] hover:text-[#1a3d28] transition-colors">
+            <ArrowLeft className="w-5 h-5" />
+            <span className="font-medium">Home</span>
+          </Link>
+          <img 
+            src="/assets/ABL Logo (6).png" 
+            alt="ABL Pulse" 
+            className="h-10"
+          />
         </div>
+      </header>
 
-        {/* Title */}
-        <h1 className="mb-8 text-center font-['Playfair_Display'] text-3xl font-bold text-brand-text md:text-4xl">
-          USER SCORE SUMMARY
-        </h1>
-
-        {/* User Info Card */}
-        <Card className="mb-8 p-6 shadow-lg">
-          <div className="flex items-center gap-6">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-bg">
-              <User className="h-10 w-10 text-brand-primary" />
-            </div>
-            <div className="flex-1">
-              <h2 className="mb-3 font-semibold text-brand-text">USER INFO</h2>
-              <div className="grid gap-1 text-sm text-brand-text/80">
-                <p>
-                  <span className="font-medium">Name:</span> {basicInfo?.name || 'N/A'}
-                </p>
-                <p>
-                  <span className="font-medium">Age:</span> {basicInfo?.age || 'N/A'}
-                </p>
-                <p>
-                  <span className="font-medium">Sex:</span> {basicInfo?.gender || 'N/A'}
-                </p>
-              </div>
-            </div>
+      {/* Main Content */}
+      <main className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+        {/* User Info Box */}
+        <div className="bg-white rounded-lg shadow-md p-6 space-y-3">
+          <h2 className="text-xl font-bold text-[#2D5F3F]">
+            {language === 'en' ? 'Your Assessment Summary' : 'आपका मूल्यांकन सारांश'}
+          </h2>
+          <div className="space-y-2 text-gray-700">
+            <p><span className="font-semibold">Name:</span> {basicInfo?.name || 'N/A'}</p>
+            <p><span className="font-semibold">Total Score:</span> {scores.total}/160</p>
+            <p>
+              <span className="font-semibold">Status:</span>{' '}
+              {scores.total >= 120 ? 'Neem Green (Optimal)' : scores.total >= 80 ? 'Amber Zone (Needs Focus)' : 'Red (Alert)'}
+            </p>
           </div>
-        </Card>
-
-        {/* Section Score Cards */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-2">
-          {sectionScores.map((section) => {
-            const category = getSectionCategory(section.score);
-            return (
-              <Card
-                key={section.sectionNumber}
-                className={`bg-white overflow-hidden shadow-lg transition-transform hover:scale-105 border-t-8 ${getCategoryTopBorderColor(category)}`}
-              >
-                <div className="p-6">
-                  <div className="mb-2 flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-gray-900">S{section.sectionNumber}</h3>
-                    <span className="text-3xl">{section.icon}</span>
-                  </div>
-                  <h4 className="mb-3 font-semibold text-gray-900">{section.title}</h4>
-                  <div className="text-2xl font-bold text-gray-900">
-                    [{section.score}/{section.maxScore}]
-                  </div>
-                </div>
-              </Card>
-            );
-          })}
         </div>
 
-        {/* View Recommendations Button */}
-        <div className="flex justify-center">
+        {/* Section Scores */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-bold text-[#2D5F3F]">
+            {language === 'en' ? 'Section Scores' : 'अनुभाग स्कोर'}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {sectionData.map((section) => {
+              const category = getSectionCategory(section.score);
+              const borderColor = getCategoryTopBorderColor(category);
+              return (
+                <div
+                  key={section.number}
+                  className={`bg-white rounded-lg shadow-md p-5 border-t-4 ${borderColor}`}
+                >
+                  <h4 className="font-semibold text-gray-900 mb-2">
+                    Section {section.number}: {section.title}
+                  </h4>
+                  <p className="text-2xl font-bold text-gray-900 mb-1">
+                    {section.score}/40
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {getSectionCategoryLabel(category)}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="space-y-3 max-w-md mx-auto">
           <Button
-            onClick={handleViewRecommendations}
-            size="lg"
-            className="w-full bg-brand-primary px-12 py-6 text-lg font-semibold text-white shadow-lg transition-all hover:scale-105 hover:bg-brand-primary/90 sm:w-auto"
+            onClick={() => navigate({ to: '/results' })}
+            className="w-full bg-[#2D5F3F] hover:bg-[#1a3d28] text-white py-6 text-base font-medium"
           >
-            VIEW RECOMMENDATIONS
+            {language === 'en' ? 'View Detailed Report' : 'विस्तृत रिपोर्ट देखें'}
+          </Button>
+
+          <Button
+            onClick={() => navigate({ to: '/recommended-services' })}
+            className="w-full bg-[#2D5F3F] hover:bg-[#1a3d28] text-white py-6 text-base font-medium"
+          >
+            {language === 'en' ? 'Continue to Services' : 'सेवाओं पर जाएं'}
           </Button>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

@@ -8,10 +8,260 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
-export const idlService = IDL.Service({});
+export const SectionId = IDL.Variant({
+  'diet' : IDL.Null,
+  'exercise' : IDL.Null,
+  'sleep' : IDL.Null,
+  'hydration' : IDL.Null,
+});
+export const SolutionTip = IDL.Record({
+  'medicalFitForHeartProblems' : IDL.Bool,
+  'medicalFitForThyroid' : IDL.Bool,
+  'medicalFitForHighBMI' : IDL.Bool,
+  'text' : IDL.Text,
+  'section' : SectionId,
+  'costLevel' : IDL.Variant({
+    'low' : IDL.Null,
+    'high' : IDL.Null,
+    'medium' : IDL.Null,
+  }),
+  'timeCommitment' : IDL.Variant({
+    'long' : IDL.Null,
+    'short' : IDL.Null,
+    'medium' : IDL.Null,
+  }),
+  'medicalFitForAlcoholUse' : IDL.Bool,
+  'medicalFitForAnemia' : IDL.Bool,
+  'severity' : IDL.Variant({
+    'low' : IDL.Null,
+    'high' : IDL.Null,
+    'medium' : IDL.Null,
+  }),
+  'medicalFitForKidney' : IDL.Bool,
+  'medicalFitForPregnancy' : IDL.Bool,
+  'medicalFitForBloodPressure' : IDL.Bool,
+  'medicalRisk' : IDL.Variant({
+    'low' : IDL.Null,
+    'high' : IDL.Null,
+    'none' : IDL.Null,
+  }),
+  'medicalFitForCholesterol' : IDL.Bool,
+  'suitability' : IDL.Variant({
+    'all' : IDL.Null,
+    'elderly' : IDL.Null,
+    'pregnant' : IDL.Null,
+    'youth' : IDL.Null,
+  }),
+  'medicalFitForSugar' : IDL.Bool,
+});
+export const SectionScores = IDL.Record({
+  'diet' : IDL.Nat,
+  'exercise' : IDL.Nat,
+  'sleep' : IDL.Nat,
+  'hydration' : IDL.Nat,
+});
+export const Time = IDL.Int;
+export const UserAnswers = IDL.Record({
+  'diet' : IDL.Vec(IDL.Nat),
+  'exercise' : IDL.Vec(IDL.Nat),
+  'sleep' : IDL.Vec(IDL.Nat),
+  'hydration' : IDL.Vec(IDL.Nat),
+});
+export const MedicalHistory = IDL.Record({
+  'hasProblemsWithPregnancy' : IDL.Bool,
+  'hasProblemsWithAlcoholUse' : IDL.Bool,
+  'hasProblemsWithCholesterol' : IDL.Bool,
+  'hasProblemsWithAnemia' : IDL.Bool,
+  'hasProblemsWithBloodPressure' : IDL.Bool,
+  'hasProblemsWithKidney' : IDL.Bool,
+  'hasProblemsWithSugar' : IDL.Bool,
+  'hasProblemsWithHeartProblems' : IDL.Bool,
+  'hasProblemsWithThyroid' : IDL.Bool,
+  'hasProblemsWithHighBMI' : IDL.Bool,
+});
+export const CompleteWellnessReport = IDL.Record({
+  'recommendations' : IDL.Vec(SolutionTip),
+  'scores' : SectionScores,
+  'problems' : IDL.Vec(IDL.Text),
+  'timestamp' : Time,
+  'healthProfile' : IDL.Record({
+    'answers' : UserAnswers,
+    'medicalHistory' : MedicalHistory,
+  }),
+});
+
+export const idlService = IDL.Service({
+  'getAllSections' : IDL.Func([], [IDL.Vec(SectionId)], []),
+  'getAllWellnessReports' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Tuple(IDL.Nat, CompleteWellnessReport))],
+      [],
+    ),
+  'getSectionScoringDetails' : IDL.Func(
+      [],
+      [
+        IDL.Record({
+          'questionPoints' : IDL.Vec(IDL.Tuple(SectionId, IDL.Vec(IDL.Nat))),
+          'scoringReference' : IDL.Vec(IDL.Tuple(IDL.Nat, IDL.Text)),
+          'sectionEndQuestion' : IDL.Vec(IDL.Tuple(SectionId, IDL.Nat)),
+          'sectionStartQuestion' : IDL.Vec(IDL.Tuple(SectionId, IDL.Nat)),
+        }),
+      ],
+      [],
+    ),
+  'getTestData' : IDL.Func(
+      [],
+      [
+        SectionScores,
+        SectionScores,
+        SectionScores,
+        MedicalHistory,
+        MedicalHistory,
+        MedicalHistory,
+      ],
+      ['query'],
+    ),
+  'getWellnessReportById' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Opt(CompleteWellnessReport)],
+      [],
+    ),
+  'saveWellnessReport' : IDL.Func([CompleteWellnessReport], [IDL.Nat], []),
+  'validateMedicalHistory' : IDL.Func(
+      [MedicalHistory],
+      [MedicalHistory],
+      ['query'],
+    ),
+});
 
 export const idlInitArgs = [];
 
-export const idlFactory = ({ IDL }) => { return IDL.Service({}); };
+export const idlFactory = ({ IDL }) => {
+  const SectionId = IDL.Variant({
+    'diet' : IDL.Null,
+    'exercise' : IDL.Null,
+    'sleep' : IDL.Null,
+    'hydration' : IDL.Null,
+  });
+  const SolutionTip = IDL.Record({
+    'medicalFitForHeartProblems' : IDL.Bool,
+    'medicalFitForThyroid' : IDL.Bool,
+    'medicalFitForHighBMI' : IDL.Bool,
+    'text' : IDL.Text,
+    'section' : SectionId,
+    'costLevel' : IDL.Variant({
+      'low' : IDL.Null,
+      'high' : IDL.Null,
+      'medium' : IDL.Null,
+    }),
+    'timeCommitment' : IDL.Variant({
+      'long' : IDL.Null,
+      'short' : IDL.Null,
+      'medium' : IDL.Null,
+    }),
+    'medicalFitForAlcoholUse' : IDL.Bool,
+    'medicalFitForAnemia' : IDL.Bool,
+    'severity' : IDL.Variant({
+      'low' : IDL.Null,
+      'high' : IDL.Null,
+      'medium' : IDL.Null,
+    }),
+    'medicalFitForKidney' : IDL.Bool,
+    'medicalFitForPregnancy' : IDL.Bool,
+    'medicalFitForBloodPressure' : IDL.Bool,
+    'medicalRisk' : IDL.Variant({
+      'low' : IDL.Null,
+      'high' : IDL.Null,
+      'none' : IDL.Null,
+    }),
+    'medicalFitForCholesterol' : IDL.Bool,
+    'suitability' : IDL.Variant({
+      'all' : IDL.Null,
+      'elderly' : IDL.Null,
+      'pregnant' : IDL.Null,
+      'youth' : IDL.Null,
+    }),
+    'medicalFitForSugar' : IDL.Bool,
+  });
+  const SectionScores = IDL.Record({
+    'diet' : IDL.Nat,
+    'exercise' : IDL.Nat,
+    'sleep' : IDL.Nat,
+    'hydration' : IDL.Nat,
+  });
+  const Time = IDL.Int;
+  const UserAnswers = IDL.Record({
+    'diet' : IDL.Vec(IDL.Nat),
+    'exercise' : IDL.Vec(IDL.Nat),
+    'sleep' : IDL.Vec(IDL.Nat),
+    'hydration' : IDL.Vec(IDL.Nat),
+  });
+  const MedicalHistory = IDL.Record({
+    'hasProblemsWithPregnancy' : IDL.Bool,
+    'hasProblemsWithAlcoholUse' : IDL.Bool,
+    'hasProblemsWithCholesterol' : IDL.Bool,
+    'hasProblemsWithAnemia' : IDL.Bool,
+    'hasProblemsWithBloodPressure' : IDL.Bool,
+    'hasProblemsWithKidney' : IDL.Bool,
+    'hasProblemsWithSugar' : IDL.Bool,
+    'hasProblemsWithHeartProblems' : IDL.Bool,
+    'hasProblemsWithThyroid' : IDL.Bool,
+    'hasProblemsWithHighBMI' : IDL.Bool,
+  });
+  const CompleteWellnessReport = IDL.Record({
+    'recommendations' : IDL.Vec(SolutionTip),
+    'scores' : SectionScores,
+    'problems' : IDL.Vec(IDL.Text),
+    'timestamp' : Time,
+    'healthProfile' : IDL.Record({
+      'answers' : UserAnswers,
+      'medicalHistory' : MedicalHistory,
+    }),
+  });
+  
+  return IDL.Service({
+    'getAllSections' : IDL.Func([], [IDL.Vec(SectionId)], []),
+    'getAllWellnessReports' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Nat, CompleteWellnessReport))],
+        [],
+      ),
+    'getSectionScoringDetails' : IDL.Func(
+        [],
+        [
+          IDL.Record({
+            'questionPoints' : IDL.Vec(IDL.Tuple(SectionId, IDL.Vec(IDL.Nat))),
+            'scoringReference' : IDL.Vec(IDL.Tuple(IDL.Nat, IDL.Text)),
+            'sectionEndQuestion' : IDL.Vec(IDL.Tuple(SectionId, IDL.Nat)),
+            'sectionStartQuestion' : IDL.Vec(IDL.Tuple(SectionId, IDL.Nat)),
+          }),
+        ],
+        [],
+      ),
+    'getTestData' : IDL.Func(
+        [],
+        [
+          SectionScores,
+          SectionScores,
+          SectionScores,
+          MedicalHistory,
+          MedicalHistory,
+          MedicalHistory,
+        ],
+        ['query'],
+      ),
+    'getWellnessReportById' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Opt(CompleteWellnessReport)],
+        [],
+      ),
+    'saveWellnessReport' : IDL.Func([CompleteWellnessReport], [IDL.Nat], []),
+    'validateMedicalHistory' : IDL.Func(
+        [MedicalHistory],
+        [MedicalHistory],
+        ['query'],
+      ),
+  });
+};
 
 export const init = ({ IDL }) => { return []; };

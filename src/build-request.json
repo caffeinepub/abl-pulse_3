@@ -1,61 +1,86 @@
 {
   "kind": "build_request",
-  "title": "Update Hero Card Content and Fix Medical History Background Color",
+  "title": "Add internal test mode with three test profiles for pattern verification",
+  "projectName": "ABL Pulse",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Replace the main Hero/Welcome card text at the top of the Basic Information page with the exact provided content. Title: 'Get Your Health Readiness Score'. Subtitle: 'जानें अपना हेल्थ रेडीनेस स्कोर'. Description: 'Difference Between Current Habits & Optimal Health Lifestyle. Discover The Current Condition of Your Body & Understand What kind of Care, Correction & Routine Adjustment it Needs — and when.' Hindi Description: 'आपकी आज की आदतों और आपकी सबसे बेहतरीन सेहत के बीच का फासला.' Benefits list: '1. You'll Get to Know Your Health More Closely & Find Out How Ready You are for a Change. 2. Through Guided Questions, You will Recognize what Healthy Habits You are Missing. 3. You will Identify Small Daily Routine Mistakes that may be Creating Long-Term Health Problems.' Preserve all structural UI elements, form fields, toggles, and buttons on the page.",
-      "target": "frontend",
+      "text": "Create backend test functions in main.mo that generate three test profiles: (1) Healthy User with all section scores in 30-40 range and no medical history, (2) Moderate Issues user with scores in 21-30 range and 'BP' medical history, (3) Serious Concerns user with scores in 0-20 range and 'Sugar, BP' medical history. Each profile must have realistic score patterns automatically generated across all 40 questions based on the profile type.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-final"
         ],
         "quotes": [
-          "STRICT CONTENT LOCK: Use the EXACT text provided below for the Header Card. Do NOT auto-improve, translate, or change a single word.",
-          "Replace ONLY the text in the Header Card with my exact provided text. Preserve all other structural UI elements, form fields, toggles, and buttons on the page."
+          "Test Data: 3 अलग प्रोफाइल (Healthy, Moderate, Serious) बनाएं, जिसमें BP और Sugar जैसी Medical History भी शामिल हो।",
+          "Medical Values: 'BP' और 'Sugar' शब्द ही इस्तेमाल करें।",
+          "Scores: प्रोफाइल टाइप के हिसाब से ऑटोमैटिक रियलिस्टिक पैटर्न्स जेनरेट कराएं।"
         ]
       },
       "acceptanceCriteria": [
-        "Hero card displays exact title 'Get Your Health Readiness Score'",
-        "Hindi subtitle 'जानें अपना हेल्थ रेडीनेस स्कोर' is displayed",
-        "Full English and Hindi descriptions appear as provided",
-        "All three benefit points are listed exactly as written",
-        "No text modifications or translations applied",
-        "All existing form fields and buttons remain unchanged"
+        "Three distinct test profile functions exist in backend that return complete WellnessReport data structures",
+        "Healthy profile generates scores between 30-40 for all sections with empty medical history",
+        "Moderate profile generates scores between 21-30 with 'BP' as medical history value",
+        "Serious profile generates scores between 0-20 with 'Sugar, BP' as medical history values",
+        "Score patterns are realistic and consistent with the profile type across all 40 questions"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Change the Medical History card background color to a very light pale mint/sage green (#EBF3ED). Keep the card's current position, layout, and all existing styling exactly the same. Ensure text remains highly readable with premium appearance.",
-      "target": "frontend",
+      "text": "Add backend verification functions that process each test profile through the pattern analysis engine and log complete results to console, including detected low-scoring questions, identified patterns, generated solution tips, and medical history integration effects.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-final"
         ],
         "quotes": [
-          "ONLY change the background color to a very light pale mint/sage green (like #EBF3ED) so it looks premium and text remains highly readable.",
-          "Keep its position and layout exactly the same."
+          "Verification: पहले Backend console पर रिजल्ट्स देखें",
+          "Scope: पैटर्न, टिप्स और मेडिकल इंटीग्रेशन—सब कुछ एक साथ वेरीफाई करें।"
         ]
       },
       "acceptanceCriteria": [
-        "Medical History card background is set to #EBF3ED or similar very light sage green",
-        "Card position and layout remain identical to Version 27",
-        "Text contrast is maintained for readability",
-        "Premium minimal appearance is preserved"
+        "Verification function exists that runs all three test profiles through the pattern analysis logic",
+        "Console logs show detected low-scoring questions for each profile",
+        "Console logs display identified health patterns for each profile",
+        "Console logs include generated Ayurvedic solution tips mapped to detected patterns",
+        "Console logs demonstrate medical history integration with appropriate additional tips for BP and Sugar conditions"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Create a frontend Test Mode page accessible only for internal developer testing that displays all three test profiles with their complete analysis results including section scores, detected patterns, solution tips, and medical history effects in a visual format matching the existing results page design.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-final"
+        ],
+        "quotes": [
+          "Test Mode: सिर्फ इंटरनल डेवलपर टेस्टिंग (Internal Only)।",
+          "Verification: फिर Frontend पर 'Test Mode' पेज बनाएं।"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Test Mode page exists in frontend with route configuration",
+        "Page displays all three test profiles (Healthy, Moderate, Serious) side by side or in tabs",
+        "Each profile shows section scores with color-coded status indicators",
+        "Each profile displays detected patterns and solution tips using existing AnalysisCard components",
+        "Page clearly indicates it is for internal testing only",
+        "Visual presentation matches the design patterns of existing ResultsPage component"
       ]
     }
   ],
   "constraints": [
-    "Do not modify any text content in the Hero card beyond replacing it with the exact provided text",
-    "Do not change any structural UI elements, form fields, toggles, or buttons on the Basic Information page",
-    "Medical History card position and layout must remain exactly as in Version 27"
+    "Use only 'BP' and 'Sugar' as medical history values, not full medical terms",
+    "Test Mode page must be internal-only and not accessible to regular users",
+    "Score patterns must be automatically generated based on profile type without manual entry of all 40 scores",
+    "Pattern analysis must use existing rule-based logic from patternAnalysis.ts"
   ],
   "nonGoals": [
-    "Auto-improving or translating the provided content",
-    "Changing any other card backgrounds or colors",
-    "Modifying form validation or functionality",
-    "Updating any other page sections or components"
+    "Creating user-facing test functionality or demo mode",
+    "Implementing AI-based score generation",
+    "Adding authentication or access control for test mode",
+    "Modifying existing pattern recognition rules or thresholds"
   ],
   "imageRequirements": {
     "required": [],

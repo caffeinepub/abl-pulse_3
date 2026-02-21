@@ -1,45 +1,61 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-20T16:26:35.419Z",
+  "generatedAt": "2026-02-21T04:24:57.562Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 2,
+    "total": 3,
+    "implemented": 1,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Replace the main Hero/Welcome card text at the top of the Basic Information page with the exact provided content. Title: 'Get Your Health Readiness Score'. Subtitle: 'जानें अपना हेल्थ रेडीनेस स्कोर'. Description: 'Difference Between Current Habits & Optimal Health Lifestyle. Discover The Current Condition of Your Body & Understand What kind of Care, Correction & Routine Adjustment it Needs — and when.' Hindi Description: 'आपकी आज की आदतों और आपकी सबसे बेहतरीन सेहत के बीच का फासला.' Benefits list: '1. You'll Get to Know Your Health More Closely & Find Out How Ready You are for a Change. 2. Through Guided Questions, You will Recognize what Healthy Habits You are Missing. 3. You will Identify Small Daily Routine Mistakes that may be Creating Long-Term Health Problems.' Preserve all structural UI elements, form fields, toggles, and buttons on the page.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/BasicInfoForm.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/BasicInfoForm.tsx"
-        ]
+        "summary": "Create backend test functions in main.mo that generate three test profiles: (1) Healthy User with all section scores in 30-40 range and no medical history, (2) Moderate Issues user with scores in 21-30 range and 'BP' medical history, (3) Serious Concerns user with scores in 0-20 range and 'Sugar, BP' medical history. Each profile must have realistic score patterns automatically generated across all 40 questions based on the profile type.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       },
       {
         "id": "REQ-2",
-        "summary": "Change the Medical History card background color to a very light pale mint/sage green (#EBF3ED). Keep the card's current position, layout, and all existing styling exactly the same. Ensure text remains highly readable with premium appearance.",
+        "summary": "Add backend verification functions that process each test profile through the pattern analysis engine and log complete results to console, including detected low-scoring questions, identified patterns, generated solution tips, and medical history integration effects.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Create a frontend Test Mode page accessible only for internal developer testing that displays all three test profiles with their complete analysis results including section scores, detected patterns, solution tips, and medical history effects in a visual format matching the existing results page design.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/BasicInfoForm.tsx"
+          "frontend/src/pages/TestModePage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/types/assessment.ts",
+          "frontend/src/utils/testDataProcessor.ts"
         ],
         "matchedFiles": [
-          "frontend/src/components/BasicInfoForm.tsx"
+          "frontend/src/pages/TestModePage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/utils/testDataProcessor.ts"
         ]
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/BasicInfoForm.tsx",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/pages/TestModePage.tsx",
+    "frontend/src/utils/testDataProcessor.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",
