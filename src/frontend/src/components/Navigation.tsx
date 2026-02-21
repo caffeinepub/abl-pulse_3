@@ -1,4 +1,4 @@
-import { Home, Activity, Info, Phone, Languages } from 'lucide-react';
+import { Home, Activity, Info, Phone, Languages, FileText } from 'lucide-react';
 import { Link, useRouterState, useNavigate } from '@tanstack/react-router';
 import { useBasicInfoStorage } from '../hooks/useBasicInfoStorage';
 import { useAssessment } from '../contexts/AssessmentContext';
@@ -104,6 +104,14 @@ export default function Navigation() {
                   </button>
                 );
               })}
+
+              <Link
+                to="/docs/logic-corrections"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-brand-primary transition-all hover:text-brand-accent hover:scale-105"
+              >
+                <FileText className="h-5 w-5" />
+                <span>Logic Docs</span>
+              </Link>
 
               {showLanguageToggle && (
                 <button

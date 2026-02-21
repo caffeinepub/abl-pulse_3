@@ -1,39 +1,74 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add internal test mode with three test profiles for pattern verification",
+  "title": "Remove authentication and create basic admin welcome page",
   "requirements": [
     {
-      "id": "REQ-3",
-      "summary": "Create a frontend Test Mode page for internal developer testing that displays all three test profiles with complete analysis results",
+      "id": "REQ-1",
+      "summary": "Remove all Internet Identity authentication logic from the AdminLoginPage component",
       "acceptanceCriteria": [
-        "Test Mode page exists in frontend with route configuration",
-        "Page displays all three test profiles (Healthy, Moderate, Serious) side by side or in tabs",
-        "Each profile shows section scores with color-coded status indicators",
-        "Each profile displays detected patterns and solution tips using existing AnalysisCard components",
-        "Page clearly indicates it is for internal testing only",
-        "Visual presentation matches the design patterns of existing ResultsPage component"
+        "Internet Identity login button is removed from the admin page",
+        "No authentication checks occur when accessing the admin area",
+        "All Internet Identity related UI elements are removed from the admin login page"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/TestModePage.tsx",
-          "operation": "create",
-          "description": "Create Test Mode page component that fetches test data from backend using getTestData() method, displays all three test profiles (Healthy, Moderate, Serious) in a tabbed or side-by-side layout. Each profile section shows section scores using SectionScoreCard components, detected problems and recommendations using AnalysisCard components, and medical history effects. Include a prominent banner indicating this is for internal testing only. Use existing components (CircularScoreGauge, SectionScoreCard, AnalysisCard) to match the visual design of ResultsPage. Process each profile through patternAnalysis.ts to generate problems and recommendations from the test score data."
+          "path": "frontend/src/pages/AdminLoginPage.tsx",
+          "operation": "modify",
+          "description": "Remove all Internet Identity authentication logic including the login button, useInternetIdentity hook usage, email verification state, and admin user checking logic. Remove all authentication-related UI elements and error states."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Transform the AdminDashboardPage into a simple welcome page displaying 'Welcome Admin'",
+      "acceptanceCriteria": [
+        "Page displays 'Welcome Admin' as the primary heading",
+        "Clean, simple dashboard layout with no complex functionality",
+        "Page is accessible without any authentication requirements"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/AdminDashboardPage.tsx",
+          "operation": "modify",
+          "description": "Simplify the AdminDashboardPage to display 'Welcome Admin' as the main heading. Remove authentication details display including principal ID, identity state, and logout functionality. Keep only the branded header and create a minimal welcome layout with navigation to home."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Update the Admin button in ContactFooter to navigate directly to admin dashboard",
+      "acceptanceCriteria": [
+        "Clicking the Admin button in the footer immediately opens the admin dashboard",
+        "No login page or authentication prompt appears",
+        "Navigation works seamlessly from any page in the application"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/ContactFooter.tsx",
+          "operation": "modify",
+          "description": "Update the Admin button navigation to link directly to '/admin/dashboard' instead of '/admin/login'. Change the link href to bypass the login page entirely."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Remove or bypass admin authentication hook that validates admin access",
+      "acceptanceCriteria": [
+        "Admin page loads without calling backend admin verification",
+        "No permission denied errors occur",
+        "Page renders immediately without authentication state checks"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/AdminDashboardPage.tsx",
+          "operation": "modify",
+          "description": "Remove the useQueries checkAdminUser hook call and all related authentication state checks. Remove any conditional rendering or redirects based on authentication status. Ensure the page renders immediately without backend verification calls."
         },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add route configuration for the Test Mode page at path '/test-mode' in the TanStack Router setup. Wire the new TestModePage component into the routing structure so it can be accessed via direct URL navigation for internal testing purposes."
-        },
-        {
-          "path": "frontend/src/types/assessment.ts",
-          "operation": "modify",
-          "description": "Add TypeScript type definitions for test profile data structures if needed to support the display of test profiles with their scores, medical history, and analysis results. Ensure compatibility with the backend getTestData() response structure which returns three SectionScores and three MedicalHistory objects."
-        },
-        {
-          "path": "frontend/src/utils/testDataProcessor.ts",
-          "operation": "create",
-          "description": "Create utility functions to process raw test data from backend (SectionScores and MedicalHistory tuples) into a format suitable for display in TestModePage. Include functions to convert section scores into the format expected by patternAnalysis.ts (array of 40 question scores), to run pattern analysis for each test profile, and to format medical history objects for display. This utility bridges the backend test data format with the frontend display requirements."
+          "description": "Update the admin route configuration to point directly to AdminDashboardPage at '/admin' path. Remove the '/admin/login' route entirely so the admin button navigates directly to the dashboard page."
         }
       ]
     }

@@ -126,6 +126,7 @@ export const idlService = IDL.Service({
       [IDL.Opt(CompleteWellnessReport)],
       [],
     ),
+  'isAdminUser' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
   'saveWellnessReport' : IDL.Func([CompleteWellnessReport], [IDL.Nat], []),
   'validateMedicalHistory' : IDL.Func(
       [MedicalHistory],
@@ -255,6 +256,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(CompleteWellnessReport)],
         [],
       ),
+    'isAdminUser' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
     'saveWellnessReport' : IDL.Func([CompleteWellnessReport], [IDL.Nat], []),
     'validateMedicalHistory' : IDL.Func(
         [MedicalHistory],

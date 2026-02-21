@@ -111,9 +111,9 @@ export default function ResultsPage() {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-8 space-y-8">
-        {/* Title */}
+        {/* Title - Fixed text overflow with responsive sizing and proper wrapping */}
         <div className="text-center space-y-2">
-          <h1 className="text-2xl md:text-3xl font-bold text-[#2D5F3F]">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#2D5F3F] break-words max-w-full px-2">
             {language === 'en' ? 'The Organic Earth | Your Wellness Report' : 'द ऑर्गेनिक अर्थ | आपकी स्वास्थ्य रिपोर्ट'}
           </h1>
         </div>

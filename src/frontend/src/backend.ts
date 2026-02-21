@@ -181,6 +181,7 @@ export interface backendInterface {
     }>;
     getTestData(): Promise<[SectionScores, SectionScores, SectionScores, MedicalHistory, MedicalHistory, MedicalHistory]>;
     getWellnessReportById(id: bigint): Promise<CompleteWellnessReport | null>;
+    isAdminUser(_email: string): Promise<boolean>;
     saveWellnessReport(report: CompleteWellnessReport): Promise<bigint>;
     validateMedicalHistory(medicalHistory: MedicalHistory): Promise<MedicalHistory>;
 }
@@ -274,6 +275,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getWellnessReportById(arg0);
             return from_candid_opt_n20(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async isAdminUser(arg0: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.isAdminUser(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.isAdminUser(arg0);
+            return result;
         }
     }
     async saveWellnessReport(arg0: CompleteWellnessReport): Promise<bigint> {

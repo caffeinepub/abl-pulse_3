@@ -109,6 +109,7 @@ export interface _SERVICE {
     [bigint],
     [] | [CompleteWellnessReport]
   >,
+  'isAdminUser' : ActorMethod<[string], boolean>,
   'saveWellnessReport' : ActorMethod<[CompleteWellnessReport], bigint>,
   'validateMedicalHistory' : ActorMethod<[MedicalHistory], MedicalHistory>,
 }

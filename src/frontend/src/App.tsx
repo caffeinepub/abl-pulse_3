@@ -5,11 +5,12 @@ import Section1 from './pages/Section1';
 import Section2 from './pages/Section2';
 import Section3 from './pages/Section3';
 import Section4 from './pages/Section4';
-import ScoreSummaryPage from './pages/ScoreSummaryPage';
 import RecommendedServicesPage from './pages/RecommendedServicesPage';
 import WellnessProfilePage from './pages/WellnessProfilePage';
 import ResultsPage from './pages/ResultsPage';
 import TestModePage from './pages/TestModePage';
+import LogicCorrectionDocsPage from './pages/LogicCorrectionDocsPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 import { LoadingScreen } from './components/LoadingScreen';
 import { AssessmentProvider } from './contexts/AssessmentContext';
 
@@ -58,12 +59,6 @@ const section4Route = createRoute({
   component: Section4,
 });
 
-const scoreSummaryRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/score-summary',
-  component: ScoreSummaryPage,
-});
-
 const recommendedServicesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/recommended-services',
@@ -88,6 +83,18 @@ const testModeRoute = createRoute({
   component: TestModePage,
 });
 
+const logicDocsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/docs/logic-corrections',
+  component: LogicCorrectionDocsPage,
+});
+
+const adminRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin',
+  component: AdminDashboardPage,
+});
+
 const recommendationsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/recommendations',
@@ -108,11 +115,12 @@ const routeTree = rootRoute.addChildren([
   section2Route,
   section3Route,
   section4Route,
-  scoreSummaryRoute,
   recommendedServicesRoute,
   wellnessProfileRoute,
   resultsRoute,
   testModeRoute,
+  logicDocsRoute,
+  adminRoute,
   recommendationsRoute,
 ]);
 

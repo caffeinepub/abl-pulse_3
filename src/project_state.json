@@ -1,22 +1,43 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Ayurvedic health assessment app with Motoko backend on Internet Computer. Implements rule-based pattern recognition for scoring 40-question assessment across 4 sections (Sleep/Hydration, Gut/Metabolism, Movement/Circulation, Mind/Emotional Balance). Provides personalized Ayurvedic solution tips based on detected patterns and medical history (BP, Sugar).",
+  "summary": "ABL Pulse - Admin dashboard project with basic welcome page and direct access (no authentication)",
   "architectural_notes": [
-    "Backend structure: main.mo (canister + API), types.mo (data models), scoring.mo (0-160 scoring), storage.mo (stable HashMap), analysis.mo (pattern recognition)",
-    "Pattern recognition is 100% rule-based and deterministic - no AI models used",
-    "Medical history keywords: 'BP' and 'Sugar' used for condition matching",
-    "Score ranges: 0-20 Alert, 21-30 Needs Work, 31-40 Good per section (4 sections × 40 = 160 total)",
-    "Test mode is internal-only for developer testing"
+    "Admin page uses direct access without authentication",
+    "Internet Identity verification logic removed for simplicity"
   ],
   "known_issues": [],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-create-a-frontend-test-mode-page-accessible-only-for-internal-developer-testing-that-displays-all-three-test-profiles-with-their-complete-analysis-results-including-section-scores-detected-patterns-solution-tips-and-medical-history-effects-in-a-visual-format-matching-the-existing-results-page-design",
-      "title": "Create a frontend Test Mode page accessible only for internal developer testing that displays all three test profiles with their complete analysis results including section scores, detected patterns, solution tips, and medical history effects in a visual format matching the existing results page design.",
+      "id": "feature-remove-all-internet-identity-authentication-logic-from-the-adminloginpage-component-including-the-login-button-authentication-flow-and-email-verification",
+      "title": "Remove all Internet Identity authentication logic from the AdminLoginPage component, including the login button, authentication flow, and email verification",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-transform-the-admindashboardpage-into-a-simple-welcome-page-displaying-welcome-admin-as-the-main-heading-with-minimal-dashboard-layout",
+      "title": "Transform the AdminDashboardPage into a simple welcome page displaying 'Welcome Admin' as the main heading with minimal dashboard layout",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-admin-button-in-the-contactfooter-component-to-navigate-directly-to-the-admin-dashboard-page-without-any-authentication-checks-or-intermediate-login-screen",
+      "title": "Update the Admin button in the ContactFooter component to navigate directly to the admin dashboard page without any authentication checks or intermediate login screen",
       "reqIds": [
         "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-or-bypass-the-admin-authentication-hook-usequeries-checkadminuser-that-validates-admin-access-ensuring-the-admin-page-loads-without-backend-permission-checks",
+      "title": "Remove or bypass the admin authentication hook (useQueries checkAdminUser) that validates admin access, ensuring the admin page loads without backend permission checks",
+      "reqIds": [
+        "REQ-4"
       ],
       "version": 1
     }
@@ -24,30 +45,26 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Create internal test mode page with 3 test profiles (Healthy, Moderate with BP, Serious with Sugar+BP) using automatic realistic score patterns",
+      "summary": "Create basic Admin dashboard with welcome page",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Implement backend test functions with console logging for pattern detection verification",
+      "summary": "Remove Internet Identity authentication logic",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Create backend test functions in main.mo that generate three test profiles: (1) Healthy User with all section scores in 30-40 range and no medical history, (2) Moderate Issues user with scores in 21-30 range and 'BP' medical history, (3) Serious Concerns user with scores in 0-20 range and 'Sugar, BP' medical history. Each profile must have realistic score patterns automatically generated across all 40 questions based on the profile type.",
-      "reqIds": [
-        "REQ-1"
-      ],
+      "summary": "Implement direct access to Admin page without authentication",
+      "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-4",
-      "summary": "Add backend verification functions that process each test profile through the pattern analysis engine and log complete results to console, including detected low-scoring questions, identified patterns, generated solution tips, and medical history integration effects.",
-      "reqIds": [
-        "REQ-2"
-      ],
+      "summary": "Link Admin button in footer to Admin page",
+      "reqIds": [],
       "status": "pending"
     }
   ],

@@ -99,6 +99,7 @@ export interface backendInterface {
     }>;
     getTestData(): Promise<[SectionScores, SectionScores, SectionScores, MedicalHistory, MedicalHistory, MedicalHistory]>;
     getWellnessReportById(id: bigint): Promise<CompleteWellnessReport | null>;
+    isAdminUser(_email: string): Promise<boolean>;
     saveWellnessReport(report: CompleteWellnessReport): Promise<bigint>;
     validateMedicalHistory(medicalHistory: MedicalHistory): Promise<MedicalHistory>;
 }

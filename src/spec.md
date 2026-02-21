@@ -1,11 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Add internal test mode with three predefined test profiles to verify pattern analysis, solution tips, and medical history integration.
+**Goal:** Remove authentication requirements and create a basic admin welcome page with direct access.
 
 **Planned changes:**
-- Create backend test functions that generate three profiles (Healthy: scores 30-40, no medical history; Moderate: scores 21-30, BP history; Serious: scores 0-20, Sugar and BP history) with realistic score patterns across all 40 questions
-- Add backend verification functions that process each test profile through pattern analysis engine and log results to console (low-scoring questions, patterns, solution tips, medical history effects)
-- Create frontend Test Mode page (internal-only) that displays all three test profiles with their complete analysis results in visual format matching existing results page design
+- Remove all Internet Identity authentication logic from the admin login page
+- Transform admin dashboard into a simple welcome page displaying "Welcome Admin"
+- Update Admin button in footer to navigate directly to admin dashboard without authentication
+- Remove or bypass admin authentication checks that validate admin access
 
-**User-visible outcome:** Developers can access an internal Test Mode page showing three test profiles with complete wellness analysis results to verify the pattern detection and solution tip generation is working correctly across different health scenarios.
+**User-visible outcome:** Users can click the Admin button in the footer and immediately access a basic "Welcome Admin" dashboard page without any login or authentication process.

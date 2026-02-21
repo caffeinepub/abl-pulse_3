@@ -1,86 +1,93 @@
 {
   "kind": "build_request",
-  "title": "Add internal test mode with three test profiles for pattern verification",
+  "title": "Remove authentication and create basic admin welcome page",
   "projectName": "ABL Pulse",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Create backend test functions in main.mo that generate three test profiles: (1) Healthy User with all section scores in 30-40 range and no medical history, (2) Moderate Issues user with scores in 21-30 range and 'BP' medical history, (3) Serious Concerns user with scores in 0-20 range and 'Sugar, BP' medical history. Each profile must have realistic score patterns automatically generated across all 40 questions based on the profile type.",
-      "target": "backend",
+      "text": "Remove all Internet Identity authentication logic from the AdminLoginPage component, including the login button, authentication flow, and email verification",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-final"
+          "msg-latest"
         ],
         "quotes": [
-          "Test Data: 3 अलग प्रोफाइल (Healthy, Moderate, Serious) बनाएं, जिसमें BP और Sugar जैसी Medical History भी शामिल हो।",
-          "Medical Values: 'BP' और 'Sugar' शब्द ही इस्तेमाल करें।",
-          "Scores: प्रोफाइल टाइप के हिसाब से ऑटोमैटिक रियलिस्टिक पैटर्न्स जेनरेट कराएं।"
+          "direct access बिना authentication"
         ]
       },
       "acceptanceCriteria": [
-        "Three distinct test profile functions exist in backend that return complete WellnessReport data structures",
-        "Healthy profile generates scores between 30-40 for all sections with empty medical history",
-        "Moderate profile generates scores between 21-30 with 'BP' as medical history value",
-        "Serious profile generates scores between 0-20 with 'Sugar, BP' as medical history values",
-        "Score patterns are realistic and consistent with the profile type across all 40 questions"
+        "Internet Identity login button is removed from the admin page",
+        "No authentication checks occur when accessing the admin area",
+        "All Internet Identity related UI elements are removed from the admin login page"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Add backend verification functions that process each test profile through the pattern analysis engine and log complete results to console, including detected low-scoring questions, identified patterns, generated solution tips, and medical history integration effects.",
-      "target": "backend",
+      "text": "Transform the AdminDashboardPage into a simple welcome page displaying 'Welcome Admin' as the main heading with minimal dashboard layout",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-final"
+          "msg-latest"
         ],
         "quotes": [
-          "Verification: पहले Backend console पर रिजल्ट्स देखें",
-          "Scope: पैटर्न, टिप्स और मेडिकल इंटीग्रेशन—सब कुछ एक साथ वेरीफाई करें।"
+          "basic welcome page होगा ( \"Welcome Admin\" dashboard)"
         ]
       },
       "acceptanceCriteria": [
-        "Verification function exists that runs all three test profiles through the pattern analysis logic",
-        "Console logs show detected low-scoring questions for each profile",
-        "Console logs display identified health patterns for each profile",
-        "Console logs include generated Ayurvedic solution tips mapped to detected patterns",
-        "Console logs demonstrate medical history integration with appropriate additional tips for BP and Sugar conditions"
+        "Page displays 'Welcome Admin' as the primary heading",
+        "Clean, simple dashboard layout with no complex functionality",
+        "Page is accessible without any authentication requirements"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Create a frontend Test Mode page accessible only for internal developer testing that displays all three test profiles with their complete analysis results including section scores, detected patterns, solution tips, and medical history effects in a visual format matching the existing results page design.",
+      "text": "Update the Admin button in the ContactFooter component to navigate directly to the admin dashboard page without any authentication checks or intermediate login screen",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-final"
+          "msg-latest"
         ],
         "quotes": [
-          "Test Mode: सिर्फ इंटरनल डेवलपर टेस्टिंग (Internal Only)।",
-          "Verification: फिर Frontend पर 'Test Mode' पेज बनाएं।"
+          "direct access बिना authentication",
+          "Admin button पर click करते ही Admin page खुल जाएगा"
         ]
       },
       "acceptanceCriteria": [
-        "Test Mode page exists in frontend with route configuration",
-        "Page displays all three test profiles (Healthy, Moderate, Serious) side by side or in tabs",
-        "Each profile shows section scores with color-coded status indicators",
-        "Each profile displays detected patterns and solution tips using existing AnalysisCard components",
-        "Page clearly indicates it is for internal testing only",
-        "Visual presentation matches the design patterns of existing ResultsPage component"
+        "Clicking the Admin button in the footer immediately opens the admin dashboard",
+        "No login page or authentication prompt appears",
+        "Navigation works seamlessly from any page in the application"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Remove or bypass the admin authentication hook (useQueries checkAdminUser) that validates admin access, ensuring the admin page loads without backend permission checks",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "verification logic ko remove kare"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin page loads without calling backend admin verification",
+        "No permission denied errors occur",
+        "Page renders immediately without authentication state checks"
       ]
     }
   ],
   "constraints": [
-    "Use only 'BP' and 'Sugar' as medical history values, not full medical terms",
-    "Test Mode page must be internal-only and not accessible to regular users",
-    "Score patterns must be automatically generated based on profile type without manual entry of all 40 scores",
-    "Pattern analysis must use existing rule-based logic from patternAnalysis.ts"
+    "Do not modify the backend main.mo file",
+    "Do not change the ContactFooter component structure beyond the Admin button navigation logic",
+    "Preserve all other navigation and routing functionality"
   ],
   "nonGoals": [
-    "Creating user-facing test functionality or demo mode",
-    "Implementing AI-based score generation",
-    "Adding authentication or access control for test mode",
-    "Modifying existing pattern recognition rules or thresholds"
+    "Implementing any ABL Pulse specific features or content (deferred to next step)",
+    "Adding new authentication mechanisms",
+    "Modifying the backend actor or API endpoints",
+    "Changing the design or styling of the admin page beyond basic welcome layout"
   ],
   "imageRequirements": {
     "required": [],

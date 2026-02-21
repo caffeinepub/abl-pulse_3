@@ -2,12 +2,46 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-create-a-frontend-test-mode-page-accessible-only-for-internal-developer-testing-that-displays-all-three-test-profiles-with-their-complete-analysis-results-including-section-scores-detected-patterns-solution-tips-and-medical-history-effects-in-a-visual-format-matching-the-existing-results-page-design",
-      "featureTitle": "Create a frontend Test Mode page accessible only for internal developer testing that displays all three test profiles with their complete analysis results including section scores, detected patterns, solution tips, and medical history effects in a visual format matching the existing results page design.",
+      "featureId": "feature-remove-all-internet-identity-authentication-logic-from-the-adminloginpage-component-including-the-login-button-authentication-flow-and-email-verification",
+      "featureTitle": "Remove all Internet Identity authentication logic from the AdminLoginPage component, including the login button, authentication flow, and email verification",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/pages/TestModePage.tsx",
-        "frontend/src/utils/testDataProcessor.ts"
+        "frontend/src/pages/AdminLoginPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-transform-the-admindashboardpage-into-a-simple-welcome-page-displaying-welcome-admin-as-the-main-heading-with-minimal-dashboard-layout",
+      "featureTitle": "Transform the AdminDashboardPage into a simple welcome page displaying 'Welcome Admin' as the main heading with minimal dashboard layout",
+      "files": [
+        "frontend/src/pages/AdminDashboardPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-admin-button-in-the-contactfooter-component-to-navigate-directly-to-the-admin-dashboard-page-without-any-authentication-checks-or-intermediate-login-screen",
+      "featureTitle": "Update the Admin button in the ContactFooter component to navigate directly to the admin dashboard page without any authentication checks or intermediate login screen",
+      "files": [
+        "frontend/src/components/ContactFooter.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -18,6 +52,25 @@
       ],
       "testIds": [
         "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-remove-or-bypass-the-admin-authentication-hook-usequeries-checkadminuser-that-validates-admin-access-ensuring-the-admin-page-loads-without-backend-permission-checks",
+      "featureTitle": "Remove or bypass the admin authentication hook (useQueries checkAdminUser) that validates admin access, ensuring the admin page loads without backend permission checks",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/pages/AdminDashboardPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
       ],
       "confidence": "high"
     }
