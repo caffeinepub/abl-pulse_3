@@ -1,70 +1,89 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Connect Admin Dashboard to Backend Database - Frontend Implementation",
+  "title": "Fix Complete Assessment Button Submission",
   "requirements": [
     {
-      "id": "REQ-3",
-      "summary": "Update useQueries hook to fetch real assessment data from backend query functions",
+      "id": "REQ-1",
+      "summary": "Fix the Complete Assessment button click handler in Section4.tsx to properly trigger the assessment submission process when clicked",
       "acceptanceCriteria": [
-        "useAdminAssessments hook calls backend query function and returns assessment list",
-        "Loading states are properly handled during data fetch",
-        "Error states are handled and displayed to user",
-        "Data is properly transformed from backend format to frontend AdminAssessmentRow type"
+        "Button responds to click events",
+        "Loading state is shown during submission",
+        "No console errors occur on button click"
       ],
       "file_operations": [
         {
+          "path": "frontend/src/pages/Section4.tsx",
+          "operation": "modify",
+          "description": "Fix the Complete Assessment button click handler by ensuring the handleSubmit function is properly bound to the button's onClick event. Verify the function properly accesses AssessmentContext values (responses, basicInfo from localStorage) and that all required data is present before calling submitAssessment. Add defensive checks for undefined values and ensure loading state (isSubmitting) is properly managed during the submission flow. Add console logging for debugging submission failures."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Ensure assessment data is successfully submitted to the Motoko backend via actor.submitAssessment() when Complete Assessment button is clicked",
+      "acceptanceCriteria": [
+        "Assessment responses are sent to backend",
+        "Backend successfully stores the assessment data",
+        "Submission returns success confirmation"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Section4.tsx",
+          "operation": "modify",
+          "description": "Verify that the handleSubmit function correctly constructs the AssessmentSubmission object matching the backend interface (including scores, user profile, healthProfile with answers and medicalHistory, recommendations, problems, and timestamp). Ensure the submission mutation from useQueries hook properly calls actor.submitAssessment() and handles the returned assessment ID. Add error handling with user-friendly toast notifications for submission failures (network errors, backend validation errors, or actor unavailable). Verify that all required fields are populated before submission."
+        },
+        {
           "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Replace the empty array return in useAdminAssessments with a call to actor.getAllAssessmentSummaries(). Transform the backend AssessmentSummary[] data to AdminAssessmentRow[] format by mapping id to string, extracting user.name as studentName, calculating score from scores object (diet + exercise + sleep + hydration), setting totalQuestions to 40, converting timestamp to submittedAt Date, and deriving answers breakdown from the scores object. Ensure proper error handling and loading states are exposed through the query object."
+          "description": "Review and fix the submitAssessment mutation to ensure it correctly calls actor.submitAssessment() with the proper data structure. Verify error handling propagates errors back to the calling component. Ensure the mutation invalidates relevant query cache keys (like 'assessments' for admin dashboard) after successful submission. Add proper TypeScript types for the mutation parameters and return value."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "After successful assessment submission, automatically navigate user to the Wellness Report page displaying their results",
+      "acceptanceCriteria": [
+        "User is redirected to results/wellness report page after submission",
+        "Results page displays the calculated scores and analysis",
+        "Navigation occurs only after successful backend submission"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Section4.tsx",
+          "operation": "modify",
+          "description": "Add navigation logic using TanStack Router's useNavigate hook to redirect to '/results' after successful submission. Ensure navigation only occurs after the submitAssessment mutation successfully resolves (using mutation.mutateAsync or checking mutation.isSuccess). Pass the assessment data (scores, problems, recommendations) to the results page via router state or localStorage. Clear any temporary assessment state after successful navigation."
+        },
+        {
+          "path": "frontend/src/pages/ResultsPage.tsx",
+          "operation": "modify",
+          "description": "Ensure the ResultsPage correctly retrieves and displays the submitted assessment data from router state or localStorage. Verify that CircularScoreGauge, SectionScoreCard, and AnalysisCard components properly render the scores, problems, and recommendations. Add fallback handling if no data is available (redirect to home or show error message). Ensure PDF download and WhatsApp consultation buttons work with the displayed data."
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Connect QuickStatsCards component to display real statistics from backend data",
+      "summary": "Verify that submitted assessments appear in the Admin Dashboard after submission",
       "acceptanceCriteria": [
-        "Total Assessments card displays actual count from backend",
-        "Average Score card shows calculated average from all submissions",
-        "Alert Users card shows count of users with low scores",
-        "Recent Submissions card shows count of assessments from last 7 days",
-        "All cards update in real-time when new assessments are submitted"
+        "Submitted assessment appears in admin dashboard table",
+        "Dashboard displays correct user data and scores",
+        "Data refresh shows newly submitted assessments without page reload"
       ],
       "file_operations": [
+        {
+          "path": "frontend/src/pages/AdminDashboardPage.tsx",
+          "operation": "modify",
+          "description": "Verify that the useAdminAssessments hook properly fetches all assessments from the backend and that the UserAssessmentDataTable component displays them correctly. Ensure that after a new submission, the query cache is properly invalidated or refetched to show the latest data. Add a manual refresh button if automatic refetch is not working. Verify that the admin authentication guard (using authorization component) properly checks if the user is an admin before displaying the dashboard."
+        },
         {
           "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Add a new useAdminStats hook that calls actor.getAdminDashboardStats() and returns the statistics object containing totalAssessments, averageScore, alertUsersCount, and recentSubmissionsCount. Set up React Query with queryKey ['adminStats'] and ensure the query is enabled when actor is available. Handle loading and error states appropriately."
+          "description": "Ensure the useAdminAssessments hook has proper refetch logic and cache invalidation. Verify that the query key for fetching all assessments matches the invalidation key used after submission. Add proper error handling for unauthorized access (non-admin users). Consider adding a refetchInterval or manual refetch trigger if real-time updates are needed."
         },
-        {
-          "path": "frontend/src/components/admin/QuickStatsCards.tsx",
-          "operation": "modify",
-          "description": "Import and use the new useAdminStats hook instead of calculating stats from assessments array. Remove the local stats calculation logic and directly use the values from the hook (totalAssessments, averageScore, alertUsersCount, recentSubmissionsCount). Update the loading skeleton to trigger when the stats query isLoading is true. Ensure the component re-renders when stats data changes."
-        },
-        {
-          "path": "frontend/src/utils/adminStatsCalculator.ts",
-          "operation": "delete",
-          "description": "Remove this file as statistics calculation is now handled by the backend and no longer needed on the frontend."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Connect UserAssessmentDataTable component to display real backend data with all filtering and sorting functionality",
-      "acceptanceCriteria": [
-        "Table displays all submitted assessments from backend",
-        "Search filter works on student names",
-        "Date range filter works on submission timestamps",
-        "Score range filter works on assessment scores",
-        "Sorting functionality works on all columns",
-        "Pagination works correctly with real data",
-        "CSV export includes all real assessment data"
-      ],
-      "file_operations": [
         {
           "path": "frontend/src/components/admin/UserAssessmentDataTable.tsx",
           "operation": "modify",
-          "description": "Replace the static SAMPLE_ASSESSMENT_DATA with data from useAdminAssessments hook. Add loading state handling to show skeleton or loading message when isLoading is true. Add error state handling to display error message if query fails. Ensure all existing filter logic (search, date range, score range), sorting, pagination, and CSV export continue to work with the real data from the backend. The data transformation from backend format to AdminAssessmentRow is already handled in the useQueries hook, so the table should work with the transformed data directly."
+          "description": "Verify that the table properly displays all columns (user name, scores, timestamp, etc.) from the fetched assessment data. Ensure filtering, sorting, and pagination work correctly with newly added assessments. Add proper loading and error states. Verify CSV export includes newly submitted assessments."
         }
       ]
     }

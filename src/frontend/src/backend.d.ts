@@ -46,21 +46,6 @@ export interface MedicalHistory {
     hasProblemsWithHighBMI: boolean;
 }
 export type Id = bigint;
-export interface AssessmentSummary {
-    id: Id;
-    recommendationsCount: bigint;
-    alertScoreCount: bigint;
-    scores: SectionScores;
-    user?: UserProfile;
-    atRiskCount: bigint;
-    alertScaleAverage: number;
-    totalScore: bigint;
-    atRiskScaleAverage: number;
-    problems: Array<string>;
-    timestamp: Time;
-    elevatedRiskScaleAverage: number;
-    elevatedRiskCount: bigint;
-}
 export interface AssessmentSubmission {
     recommendations: Array<SolutionTip>;
     scores: SectionScores;
@@ -123,9 +108,8 @@ export interface backendInterface {
         totalAssessments: bigint;
         averageScore: number;
     }>;
-    getAllAssessmentSummaries(): Promise<Array<AssessmentSummary>>;
+    getAllAssessments(): Promise<Array<[Id, AssessmentSubmission]>>;
     getAllSections(): Promise<Array<SectionId>>;
-    getAssessmentSubmissionById(id: bigint): Promise<AssessmentSubmission | null>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getSectionScoringDetails(): Promise<{
@@ -138,6 +122,6 @@ export interface backendInterface {
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isAdminUser(_email: string): Promise<boolean>;
     isCallerAdmin(): Promise<boolean>;
-    saveAssessmentSubmission(submission: AssessmentSubmission): Promise<bigint>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    submitAssessment(submission: AssessmentSubmission): Promise<bigint>;
 }

@@ -1,63 +1,64 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-22T00:02:29.793Z",
+  "generatedAt": "2026-02-22T02:19:28.969Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 5,
-    "implemented": 2,
+    "total": 4,
+    "implemented": 4,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Implement backend query function to retrieve all submitted assessments with details including student name, score, total questions, submission timestamp, and answers breakdown",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
+        "summary": "Fix the Complete Assessment button click handler in Section4.tsx to properly trigger the assessment submission process when clicked",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/Section4.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/Section4.tsx"
+        ]
       },
       {
         "id": "REQ-2",
-        "summary": "Implement backend function to calculate and return admin dashboard statistics including total assessment count, average score, alert users count, and recent submissions count",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-3",
-        "summary": "Update useQueries hook to fetch real assessment data from backend using the new query functions instead of returning empty arrays",
+        "summary": "Ensure assessment data is successfully submitted to the Motoko backend via actor.submitAssessment() when Complete Assessment button is clicked",
         "status": "implemented",
         "plannedFiles": [
+          "frontend/src/pages/Section4.tsx",
           "frontend/src/hooks/useQueries.ts"
         ],
         "matchedFiles": [
+          "frontend/src/pages/Section4.tsx",
           "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "After successful assessment submission, automatically navigate user to the Wellness Report page displaying their results",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/Section4.tsx",
+          "frontend/src/pages/ResultsPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/Section4.tsx",
+          "frontend/src/pages/ResultsPage.tsx"
         ]
       },
       {
         "id": "REQ-4",
-        "summary": "Connect QuickStatsCards component to display real statistics from backend data instead of calculating from empty arrays",
+        "summary": "Verify that submitted assessments appear in the Admin Dashboard after submission",
         "status": "implemented",
         "plannedFiles": [
+          "frontend/src/pages/AdminDashboardPage.tsx",
           "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/admin/QuickStatsCards.tsx",
-          "frontend/src/utils/adminStatsCalculator.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/admin/QuickStatsCards.tsx",
-          "frontend/src/utils/adminStatsCalculator.ts"
-        ]
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Connect UserAssessmentDataTable component to display the list of submitted assessments fetched from backend with all filtering and sorting functionality working on real data",
-        "status": "missing",
-        "plannedFiles": [
           "frontend/src/components/admin/UserAssessmentDataTable.tsx"
         ],
-        "matchedFiles": []
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ]
       }
     ]
   },
@@ -67,14 +68,9 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/admin/QuickStatsCards.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
     "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/AdminDashboardPage.tsx",
-    "frontend/src/utils/adminStatsCalculator.ts",
+    "frontend/src/pages/ResultsPage.tsx",
+    "frontend/src/pages/Section4.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

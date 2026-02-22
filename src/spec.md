@@ -1,13 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Connect the Admin Dashboard to the backend database to display real assessment data and statistics.
+**Goal:** Fix the Complete Assessment button to properly submit assessment data to the backend and navigate users to the Wellness Report page.
 
 **Planned changes:**
-- Implement backend query functions to retrieve all submitted assessments with complete details (student name, score, answers, timestamps)
-- Implement backend function to calculate dashboard statistics (total assessments, average score, alert users, recent submissions)
-- Update frontend useQueries hooks to fetch real data from backend instead of returning empty arrays
-- Connect QuickStatsCards component to display actual statistics from backend
-- Connect UserAssessmentDataTable to display real assessment submissions with working filters, sorting, and pagination
+- Fix Complete Assessment button click handler in Section4.tsx to trigger submission process
+- Ensure assessment data is successfully submitted to Motoko backend via actor.submitAssessment()
+- Implement automatic navigation to Wellness Report page after successful submission
+- Verify submitted assessments appear in Admin Dashboard after submission
 
-**User-visible outcome:** Admin dashboard displays real assessment submissions in the table, accurate statistics in the stat cards, and all filtering/sorting features work with actual data from the backend database.
+**User-visible outcome:** Users can successfully complete and submit their wellness assessments. After clicking Complete Assessment, they are automatically redirected to view their Wellness Report with calculated scores. Submitted assessments immediately appear in the Admin Dashboard.

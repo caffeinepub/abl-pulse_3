@@ -23,7 +23,7 @@ export interface FilterState {
   scoreMax: number | null;
 }
 
-export type SortColumn = 'userName' | 'assessmentDate' | 'totalScore' | 'sleep' | 'hydration' | 'diet' | 'exercise';
+export type SortColumn = 'id' | 'userName' | 'assessmentDate' | 'totalScore' | 'sleep' | 'hydration' | 'diet' | 'exercise';
 export type SortDirection = 'asc' | 'desc';
 
 export interface SortState {

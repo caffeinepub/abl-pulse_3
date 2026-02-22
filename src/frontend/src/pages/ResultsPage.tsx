@@ -23,12 +23,22 @@ export default function ResultsPage() {
   const { downloadPDF, isGenerating } = usePDFDownload();
 
   useEffect(() => {
+    console.log('ResultsPage: Checking assessment completion');
+    console.log('ResultsPage: Responses:', responses);
+    
     // Check if assessment is complete
-    const allAnswered = Object.values(responses).every(r => r !== null && r !== undefined);
+    const responseValues = Object.values(responses);
+    const allAnswered = responseValues.length === 40 && responseValues.every(r => r !== null && r !== undefined);
+    
+    console.log('ResultsPage: All answered?', allAnswered);
+    
     if (!allAnswered) {
+      console.log('ResultsPage: Assessment incomplete, redirecting to section1');
       navigate({ to: '/assessment/section1' });
       return;
     }
+    
+    console.log('ResultsPage: Assessment complete, showing results');
     setIsLoading(false);
   }, [responses, navigate]);
 

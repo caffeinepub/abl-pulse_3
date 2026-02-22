@@ -7,11 +7,19 @@ import GlobalAssessmentOptions from '../components/GlobalAssessmentOptions';
 import Navigation from '../components/Navigation';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, CheckCircle, Loader2 } from 'lucide-react';
+import { useSubmitAssessment } from '../hooks/useQueries';
+import { useBasicInfoStorage } from '../hooks/useBasicInfoStorage';
+import { calculateScores } from '../utils/scoringUtils';
+import { analyzeResponses } from '../utils/patternAnalysis';
+import { SectionId, type AssessmentSubmission, type SolutionTip, Variant_low_high_medium, Variant_long_short_medium, Variant_low_high_none, Variant_all_elderly_pregnant_youth } from '../backend';
+import { toast } from 'sonner';
 
 export default function Section4() {
   const navigate = useNavigate();
   const { responses, language, updateResponse, isSectionComplete, canAccessSection } = useAssessment();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { getBasicInfo } = useBasicInfoStorage();
+  const submitAssessmentMutation = useSubmitAssessment();
 
   // Guard: Check if user can access Section 4
   useEffect(() => {
@@ -28,26 +36,158 @@ export default function Section4() {
   }, [canAccessSection, navigate]);
 
   const handleComplete = async () => {
-    // Verify all 40 questions are answered before navigating to results
+    console.log('Complete Assessment button clicked');
+    
+    // Verify all 40 questions are answered before submitting
     const allComplete = isSectionComplete(1) && isSectionComplete(2) && isSectionComplete(3) && isSectionComplete(4);
     
-    if (allComplete) {
-      setIsSubmitting(true);
+    console.log('Section completion status:', {
+      section1: isSectionComplete(1),
+      section2: isSectionComplete(2),
+      section3: isSectionComplete(3),
+      section4: isSectionComplete(4),
+      allComplete
+    });
+    
+    if (!allComplete) {
+      toast.error(language === 'en' ? 'Please complete all sections' : 'कृपया सभी अनुभाग पूरे करें');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      // Get basic info from localStorage
+      const basicInfo = getBasicInfo();
+      console.log('Basic info retrieved:', basicInfo);
       
-      try {
-        // Simulate backend save operation
-        // In a real implementation, you would call the backend here
-        // await saveAssessmentToBackend(responses);
-        
-        // Add a small delay to show the loading state
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // Navigate to results page
-        navigate({ to: '/results' });
-      } catch (error) {
-        console.error('Error saving assessment:', error);
-        setIsSubmitting(false);
+      if (!basicInfo) {
+        throw new Error('Basic information not found');
       }
+
+      // Calculate section scores
+      const scores = calculateScores(responses);
+      console.log('Calculated scores:', scores);
+
+      // Run pattern analysis to get problems and suggestions
+      const analysis = analyzeResponses(responses);
+      console.log('Analysis results:', analysis);
+
+      // Map responses to backend format
+      // Section 1 (Q1-10): Sleep & Hydration → sleep
+      // Section 2 (Q11-20): Gut Cleanse → diet
+      // Section 3 (Q21-30): Movement → exercise
+      // Section 4 (Q31-40): Mind & Emotional → hydration (mapping to available field)
+      const sleepAnswers: bigint[] = [];
+      const hydrationAnswers: bigint[] = [];
+      const dietAnswers: bigint[] = [];
+      const exerciseAnswers: bigint[] = [];
+
+      for (let i = 1; i <= 10; i++) {
+        sleepAnswers.push(BigInt(responses[i] ?? 0));
+      }
+      for (let i = 11; i <= 20; i++) {
+        dietAnswers.push(BigInt(responses[i] ?? 0));
+      }
+      for (let i = 21; i <= 30; i++) {
+        exerciseAnswers.push(BigInt(responses[i] ?? 0));
+      }
+      for (let i = 31; i <= 40; i++) {
+        hydrationAnswers.push(BigInt(responses[i] ?? 0));
+      }
+
+      // Create medical history object from basic info
+      const medicalHistory = {
+        hasProblemsWithBloodPressure: basicInfo.medicalHistory?.bloodPressure || false,
+        hasProblemsWithSugar: basicInfo.medicalHistory?.sugar || false,
+        hasProblemsWithKidney: false,
+        hasProblemsWithPregnancy: false,
+        hasProblemsWithAnemia: false,
+        hasProblemsWithHeartProblems: false,
+        hasProblemsWithThyroid: basicInfo.medicalHistory?.thyroid || false,
+        hasProblemsWithCholesterol: false,
+        hasProblemsWithHighBMI: false,
+        hasProblemsWithAlcoholUse: false,
+      };
+
+      // Create recommendations array (simplified for now)
+      const recommendations: SolutionTip[] = analysis.habitSuggestions.slice(0, 3).map((suggestion) => ({
+        section: SectionId.sleep,
+        text: suggestion,
+        severity: Variant_low_high_medium.medium,
+        costLevel: Variant_low_high_medium.low,
+        timeCommitment: Variant_long_short_medium.short_,
+        medicalRisk: Variant_low_high_none.none,
+        suitability: Variant_all_elderly_pregnant_youth.all,
+        medicalFitForBloodPressure: true,
+        medicalFitForSugar: true,
+        medicalFitForKidney: true,
+        medicalFitForPregnancy: true,
+        medicalFitForAnemia: true,
+        medicalFitForHeartProblems: true,
+        medicalFitForThyroid: true,
+        medicalFitForCholesterol: true,
+        medicalFitForHighBMI: true,
+        medicalFitForAlcoholUse: true,
+      }));
+
+      // Create submission object
+      const submission: AssessmentSubmission = {
+        user: {
+          name: basicInfo.name,
+        },
+        healthProfile: {
+          answers: {
+            sleep: sleepAnswers,
+            hydration: hydrationAnswers,
+            diet: dietAnswers,
+            exercise: exerciseAnswers,
+          },
+          medicalHistory,
+        },
+        scores: {
+          sleep: BigInt(scores.section1),
+          hydration: BigInt(scores.section4), // Mind & Emotional mapped to hydration
+          diet: BigInt(scores.section2),
+          exercise: BigInt(scores.section3),
+        },
+        recommendations,
+        problems: analysis.primaryProblems,
+        timestamp: BigInt(Date.now() * 1_000_000), // Convert to nanoseconds
+      };
+
+      console.log('Submitting assessment to backend:', submission);
+
+      // Submit to backend
+      const assessmentId = await submitAssessmentMutation.mutateAsync(submission);
+      
+      console.log('Assessment submitted successfully with ID:', assessmentId);
+
+      // Show success message
+      toast.success(
+        language === 'en' 
+          ? 'Assessment submitted successfully!' 
+          : 'मूल्यांकन सफलतापूर्वक सबमिट किया गया!'
+      );
+
+      // Navigate to results page after a short delay
+      setTimeout(() => {
+        navigate({ to: '/results' });
+      }, 500);
+      
+    } catch (error) {
+      console.error('Error submitting assessment:', error);
+      setIsSubmitting(false);
+      
+      // Show error message with more details
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Detailed error:', errorMessage);
+      
+      toast.error(
+        language === 'en'
+          ? `Failed to submit assessment: ${errorMessage}`
+          : `मूल्यांकन सबमिट करने में विफल: ${errorMessage}`
+      );
     }
   };
 
@@ -56,6 +196,9 @@ export default function Section4() {
   };
 
   const isComplete = isSectionComplete(4);
+  
+  // Debug log for button state
+  console.log('Button state:', { isComplete, isSubmitting, disabled: !isComplete || isSubmitting });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-bg via-white to-brand-bg/50 px-4 py-8 pb-24 sm:px-6 lg:px-8">
@@ -75,12 +218,12 @@ export default function Section4() {
             </div>
             <div className="space-y-3">
               <h3 className="text-2xl font-bold text-brand-primary">
-                {language === 'en' ? 'Calculating your wellness score...' : 'आपके स्वास्थ्य स्कोर की गणना हो रही है...'}
+                {language === 'en' ? 'Submitting your assessment...' : 'आपका मूल्यांकन सबमिट हो रहा है...'}
               </h3>
               <p className="text-gray-600">
                 {language === 'en' 
-                  ? 'Please wait while we analyze your responses' 
-                  : 'कृपया प्रतीक्षा करें जब तक हम आपके उत्तरों का विश्लेषण करते हैं'}
+                  ? 'Please wait while we save your responses' 
+                  : 'कृपया प्रतीक्षा करें जब तक हम आपके उत्तर सहेजते हैं'}
               </p>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
@@ -149,7 +292,7 @@ export default function Section4() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  {language === 'en' ? 'Processing...' : 'प्रक्रिया में...'}
+                  {language === 'en' ? 'Submitting...' : 'सबमिट हो रहा है...'}
                 </>
               ) : (
                 <>

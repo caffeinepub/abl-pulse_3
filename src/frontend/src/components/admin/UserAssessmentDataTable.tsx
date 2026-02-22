@@ -52,12 +52,8 @@ export function UserAssessmentDataTable({ data, isLoading }: UserAssessmentDataT
       if (filters.dateFrom && row.assessmentDate < filters.dateFrom) {
         return false;
       }
-      if (filters.dateTo) {
-        const dateTo = new Date(filters.dateTo);
-        dateTo.setHours(23, 59, 59, 999); // Include entire day
-        if (row.assessmentDate > dateTo) {
-          return false;
-        }
+      if (filters.dateTo && row.assessmentDate > filters.dateTo) {
+        return false;
       }
 
       // Score range filter
@@ -79,40 +75,45 @@ export function UserAssessmentDataTable({ data, isLoading }: UserAssessmentDataT
     if (!sortColumn) return filteredData;
 
     return [...filteredData].sort((a, b) => {
-      switch (sortColumn) {
-        case 'userName':
-          return comparator(a, b, (item) => item.userName.toLowerCase());
-        case 'assessmentDate':
-          return comparator(a, b, (item) => item.assessmentDate.getTime());
-        case 'totalScore':
-          return comparator(a, b, (item) => item.totalScore);
-        case 'sleep':
-          return comparator(a, b, (item) => item.sectionScores.sleep);
-        case 'hydration':
-          return comparator(a, b, (item) => item.sectionScores.hydration);
-        case 'diet':
-          return comparator(a, b, (item) => item.sectionScores.diet);
-        case 'exercise':
-          return comparator(a, b, (item) => item.sectionScores.exercise);
-        default:
-          return 0;
-      }
+      return comparator(a, b, (item) => {
+        switch (sortColumn) {
+          case 'id':
+            return item.id;
+          case 'userName':
+            return item.userName;
+          case 'assessmentDate':
+            return item.assessmentDate.getTime();
+          case 'totalScore':
+            return item.totalScore;
+          default:
+            return 0;
+        }
+      });
     });
   }, [filteredData, sortColumn, comparator]);
 
   // Pagination
-  const pagination = usePagination(sortedData, 10);
+  const pagination = usePagination<AdminAssessmentRow>(sortedData, 10);
+
+  // Clear all filters
+  const handleClearFilters = () => {
+    setFilters({
+      searchTerm: '',
+      dateFrom: null,
+      dateTo: null,
+      scoreMin: null,
+      scoreMax: null,
+    });
+  };
 
   // Export to CSV
   const handleExport = async () => {
+    setIsExporting(true);
     try {
-      setIsExporting(true);
-      const csvData = formatAssessmentDataForCSV(sortedData);
-      const csvContent = generateCSV(csvData);
-      const timestamp = new Date().toISOString().split('T')[0];
-      const filename = `abl-assessments-${timestamp}.csv`;
-      downloadCSV(csvContent, filename);
-      toast.success('Assessment data exported successfully');
+      const csvData = formatAssessmentDataForCSV(filteredData);
+      const csv = generateCSV(csvData);
+      downloadCSV(csv, `wellness-assessments-${new Date().toISOString().split('T')[0]}.csv`);
+      toast.success('Data exported successfully');
     } catch (error) {
       console.error('Export error:', error);
       toast.error('Failed to export data');
@@ -121,6 +122,7 @@ export function UserAssessmentDataTable({ data, isLoading }: UserAssessmentDataT
     }
   };
 
+  // Render sort icon
   const renderSortIcon = (column: SortColumn) => {
     if (sortColumn !== column) {
       return <ArrowUpDown className="ml-2 h-4 w-4" />;
@@ -132,33 +134,41 @@ export function UserAssessmentDataTable({ data, isLoading }: UserAssessmentDataT
     );
   };
 
+  // Get score status color
+  const getScoreColor = (score: number) => {
+    if (score < 80) return 'text-red-600 font-semibold';
+    if (score < 120) return 'text-amber-600 font-semibold';
+    return 'text-green-600 font-semibold';
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-brand-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      {/* Filters and Export */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="flex-1 w-full">
-          <AssessmentFilters filters={filters} onFilterChange={setFilters} activeFilterCount={activeFilterCount} />
-        </div>
-      </div>
+      {/* Filters */}
+      <AssessmentFilters
+        filters={filters}
+        onFilterChange={setFilters}
+        activeFilterCount={activeFilterCount}
+      />
 
+      {/* Export Button */}
       <div className="flex justify-end">
-        <Button onClick={handleExport} disabled={isExporting || sortedData.length === 0} className="gap-2">
+        <Button onClick={handleExport} disabled={isExporting || filteredData.length === 0} variant="outline" size="sm">
           {isExporting ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Exporting...
             </>
           ) : (
             <>
-              <Download className="h-4 w-4" />
+              <Download className="mr-2 h-4 w-4" />
               Export CSV
             </>
           )}
@@ -166,78 +176,60 @@ export function UserAssessmentDataTable({ data, isLoading }: UserAssessmentDataT
       </div>
 
       {/* Table */}
-      <div className="rounded-md border bg-white shadow-sm overflow-x-auto">
+      <div className="rounded-md border bg-white shadow-sm overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="bg-brand-bg/30">
               <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('userName')} className="h-8 px-2">
-                  Name
+                <Button variant="ghost" onClick={() => handleSort('id')} className="h-8 px-2 lg:px-3">
+                  ID
+                  {renderSortIcon('id')}
+                </Button>
+              </TableHead>
+              <TableHead>
+                <Button variant="ghost" onClick={() => handleSort('userName')} className="h-8 px-2 lg:px-3">
+                  User Name
                   {renderSortIcon('userName')}
                 </Button>
               </TableHead>
               <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('assessmentDate')} className="h-8 px-2">
+                <Button variant="ghost" onClick={() => handleSort('assessmentDate')} className="h-8 px-2 lg:px-3">
                   Date
                   {renderSortIcon('assessmentDate')}
                 </Button>
               </TableHead>
               <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('totalScore')} className="h-8 px-2">
+                <Button variant="ghost" onClick={() => handleSort('totalScore')} className="h-8 px-2 lg:px-3">
                   Total Score
                   {renderSortIcon('totalScore')}
                 </Button>
               </TableHead>
-              <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('sleep')} className="h-8 px-2">
-                  Sleep
-                  {renderSortIcon('sleep')}
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('hydration')} className="h-8 px-2">
-                  Hydration
-                  {renderSortIcon('hydration')}
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('diet')} className="h-8 px-2">
-                  Diet
-                  {renderSortIcon('diet')}
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('exercise')} className="h-8 px-2">
-                  Exercise
-                  {renderSortIcon('exercise')}
-                </Button>
-              </TableHead>
-              <TableHead>WhatsApp</TableHead>
-              <TableHead>Email</TableHead>
+              <TableHead className="text-center">Sleep</TableHead>
+              <TableHead className="text-center">Diet</TableHead>
+              <TableHead className="text-center">Exercise</TableHead>
+              <TableHead className="text-center">Hydration</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {pagination.paginatedData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
-                  {activeFilterCount > 0 ? 'No results match your filters' : 'No assessment data available'}
+                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                  No assessments found
                 </TableCell>
               </TableRow>
             ) : (
               pagination.paginatedData.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell className="font-medium">{row.userName}</TableCell>
-                  <TableCell>{row.assessmentDate.toLocaleDateString('en-IN')}</TableCell>
-                  <TableCell>
-                    <span className="font-semibold">{row.totalScore}</span>
-                    <span className="text-muted-foreground">/160</span>
+                <TableRow key={row.id} className="hover:bg-brand-bg/10">
+                  <TableCell className="font-medium">{row.id}</TableCell>
+                  <TableCell>{row.userName}</TableCell>
+                  <TableCell>{row.assessmentDate.toLocaleDateString()}</TableCell>
+                  <TableCell className={getScoreColor(row.totalScore)}>
+                    {row.totalScore}/160
                   </TableCell>
-                  <TableCell>{row.sectionScores.sleep}/40</TableCell>
-                  <TableCell>{row.sectionScores.hydration}/40</TableCell>
-                  <TableCell>{row.sectionScores.diet}/40</TableCell>
-                  <TableCell>{row.sectionScores.exercise}/40</TableCell>
-                  <TableCell className="font-mono text-sm">{row.whatsappNumber}</TableCell>
-                  <TableCell className="text-sm">{row.email || '-'}</TableCell>
+                  <TableCell className="text-center">{row.sectionScores.sleep}/40</TableCell>
+                  <TableCell className="text-center">{row.sectionScores.diet}/40</TableCell>
+                  <TableCell className="text-center">{row.sectionScores.exercise}/40</TableCell>
+                  <TableCell className="text-center">{row.sectionScores.hydration}/40</TableCell>
                 </TableRow>
               ))
             )}
@@ -246,12 +238,12 @@ export function UserAssessmentDataTable({ data, isLoading }: UserAssessmentDataT
       </div>
 
       {/* Pagination */}
-      {pagination.totalItems > 0 && (
+      {filteredData.length > 0 && (
         <TablePagination
           currentPage={pagination.currentPage}
           totalPages={pagination.totalPages}
           pageSize={pagination.pageSize}
-          pageSizeOptions={[10, 20]}
+          pageSizeOptions={[5, 10, 20, 50]}
           totalItems={pagination.totalItems}
           onPageChange={pagination.goToPage}
           onPageSizeChange={pagination.setPageSize}

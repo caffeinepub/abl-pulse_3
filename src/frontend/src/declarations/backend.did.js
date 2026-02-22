@@ -14,29 +14,6 @@ export const UserRole = IDL.Variant({
   'guest' : IDL.Null,
 });
 export const Id = IDL.Nat;
-export const SectionScores = IDL.Record({
-  'diet' : IDL.Nat,
-  'exercise' : IDL.Nat,
-  'sleep' : IDL.Nat,
-  'hydration' : IDL.Nat,
-});
-export const UserProfile = IDL.Record({ 'name' : IDL.Text });
-export const Time = IDL.Int;
-export const AssessmentSummary = IDL.Record({
-  'id' : Id,
-  'recommendationsCount' : IDL.Nat,
-  'alertScoreCount' : IDL.Nat,
-  'scores' : SectionScores,
-  'user' : IDL.Opt(UserProfile),
-  'atRiskCount' : IDL.Nat,
-  'alertScaleAverage' : IDL.Float64,
-  'totalScore' : IDL.Nat,
-  'atRiskScaleAverage' : IDL.Float64,
-  'problems' : IDL.Vec(IDL.Text),
-  'timestamp' : Time,
-  'elevatedRiskScaleAverage' : IDL.Float64,
-  'elevatedRiskCount' : IDL.Nat,
-});
 export const SectionId = IDL.Variant({
   'diet' : IDL.Null,
   'exercise' : IDL.Null,
@@ -83,6 +60,14 @@ export const SolutionTip = IDL.Record({
   }),
   'medicalFitForSugar' : IDL.Bool,
 });
+export const SectionScores = IDL.Record({
+  'diet' : IDL.Nat,
+  'exercise' : IDL.Nat,
+  'sleep' : IDL.Nat,
+  'hydration' : IDL.Nat,
+});
+export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const Time = IDL.Int;
 export const UserAnswers = IDL.Record({
   'diet' : IDL.Vec(IDL.Nat),
   'exercise' : IDL.Vec(IDL.Nat),
@@ -130,17 +115,12 @@ export const idlService = IDL.Service({
       ],
       ['query'],
     ),
-  'getAllAssessmentSummaries' : IDL.Func(
+  'getAllAssessments' : IDL.Func(
       [],
-      [IDL.Vec(AssessmentSummary)],
+      [IDL.Vec(IDL.Tuple(Id, AssessmentSubmission))],
       ['query'],
     ),
   'getAllSections' : IDL.Func([], [IDL.Vec(SectionId)], ['query']),
-  'getAssessmentSubmissionById' : IDL.Func(
-      [IDL.Nat],
-      [IDL.Opt(AssessmentSubmission)],
-      ['query'],
-    ),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getSectionScoringDetails' : IDL.Func(
@@ -174,8 +154,8 @@ export const idlService = IDL.Service({
     ),
   'isAdminUser' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-  'saveAssessmentSubmission' : IDL.Func([AssessmentSubmission], [IDL.Nat], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'submitAssessment' : IDL.Func([AssessmentSubmission], [IDL.Nat], []),
 });
 
 export const idlInitArgs = [];
@@ -187,29 +167,6 @@ export const idlFactory = ({ IDL }) => {
     'guest' : IDL.Null,
   });
   const Id = IDL.Nat;
-  const SectionScores = IDL.Record({
-    'diet' : IDL.Nat,
-    'exercise' : IDL.Nat,
-    'sleep' : IDL.Nat,
-    'hydration' : IDL.Nat,
-  });
-  const UserProfile = IDL.Record({ 'name' : IDL.Text });
-  const Time = IDL.Int;
-  const AssessmentSummary = IDL.Record({
-    'id' : Id,
-    'recommendationsCount' : IDL.Nat,
-    'alertScoreCount' : IDL.Nat,
-    'scores' : SectionScores,
-    'user' : IDL.Opt(UserProfile),
-    'atRiskCount' : IDL.Nat,
-    'alertScaleAverage' : IDL.Float64,
-    'totalScore' : IDL.Nat,
-    'atRiskScaleAverage' : IDL.Float64,
-    'problems' : IDL.Vec(IDL.Text),
-    'timestamp' : Time,
-    'elevatedRiskScaleAverage' : IDL.Float64,
-    'elevatedRiskCount' : IDL.Nat,
-  });
   const SectionId = IDL.Variant({
     'diet' : IDL.Null,
     'exercise' : IDL.Null,
@@ -256,6 +213,14 @@ export const idlFactory = ({ IDL }) => {
     }),
     'medicalFitForSugar' : IDL.Bool,
   });
+  const SectionScores = IDL.Record({
+    'diet' : IDL.Nat,
+    'exercise' : IDL.Nat,
+    'sleep' : IDL.Nat,
+    'hydration' : IDL.Nat,
+  });
+  const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const Time = IDL.Int;
   const UserAnswers = IDL.Record({
     'diet' : IDL.Vec(IDL.Nat),
     'exercise' : IDL.Vec(IDL.Nat),
@@ -303,17 +268,12 @@ export const idlFactory = ({ IDL }) => {
         ],
         ['query'],
       ),
-    'getAllAssessmentSummaries' : IDL.Func(
+    'getAllAssessments' : IDL.Func(
         [],
-        [IDL.Vec(AssessmentSummary)],
+        [IDL.Vec(IDL.Tuple(Id, AssessmentSubmission))],
         ['query'],
       ),
     'getAllSections' : IDL.Func([], [IDL.Vec(SectionId)], ['query']),
-    'getAssessmentSubmissionById' : IDL.Func(
-        [IDL.Nat],
-        [IDL.Opt(AssessmentSubmission)],
-        ['query'],
-      ),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getSectionScoringDetails' : IDL.Func(
@@ -347,12 +307,8 @@ export const idlFactory = ({ IDL }) => {
       ),
     'isAdminUser' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-    'saveAssessmentSubmission' : IDL.Func(
-        [AssessmentSubmission],
-        [IDL.Nat],
-        [],
-      ),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'submitAssessment' : IDL.Func([AssessmentSubmission], [IDL.Nat], []),
   });
 };
 

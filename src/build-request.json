@@ -1,127 +1,93 @@
 {
   "kind": "build_request",
-  "title": "Connect Admin Dashboard to Backend Database",
+  "title": "Fix Complete Assessment Button Submission",
   "projectName": "ABL Pulse",
   "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Implement backend query function to retrieve all submitted assessments with details including student name, score, total questions, submission timestamp, and answers breakdown",
-      "target": "backend",
+      "text": "Fix the Complete Assessment button click handler in Section4.tsx to properly trigger the assessment submission process when clicked",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-final"
+          "msg-user-final"
         ],
         "quotes": [
-          "Admin Dashboard mein submitted assessments ki list nahi dikh rahi",
-          "Assessment data store karne ke liye proper functions banaunga",
-          "Admin ke liye assessments list retrieve karne ka endpoint"
+          "Complete Assessment बटन पर click करते हैं तो बटन काम नहीं करता"
         ]
       },
       "acceptanceCriteria": [
-        "Backend function returns array of all assessment submissions",
-        "Each assessment includes id, studentName, score, totalQuestions, submittedAt timestamp, and detailed answers",
-        "Function is accessible to admin users only"
+        "Button responds to click events",
+        "Loading state is shown during submission",
+        "No console errors occur on button click"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Implement backend function to calculate and return admin dashboard statistics including total assessment count, average score, alert users count, and recent submissions count",
-      "target": "backend",
+      "text": "Ensure assessment data is successfully submitted to the Motoko backend via actor.submitAssessment() when Complete Assessment button is clicked",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-final"
+          "msg-user-final"
         ],
         "quotes": [
-          "Stats cards (Total Assessments, Average Score, etc.) update nahi ho rahe",
-          "Stats calculate karne ka logic (total count, average score, etc.)"
+          "Complete Assessment बटन पर click करते हैं तो बटन काम नहीं करता"
         ]
       },
       "acceptanceCriteria": [
-        "Function returns total count of all assessments",
-        "Function calculates and returns average score across all assessments",
-        "Function returns count of users in alert category (low scores)",
-        "Function returns count of assessments submitted in last 7 days"
+        "Assessment responses are sent to backend",
+        "Backend successfully stores the assessment data",
+        "Submission returns success confirmation"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Update useQueries hook to fetch real assessment data from backend using the new query functions instead of returning empty arrays",
+      "text": "After successful assessment submission, automatically navigate user to the Wellness Report page displaying their results",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-final"
+          "msg-user-final"
         ],
         "quotes": [
-          "Backend se data fetch karne ke liye React Query hooks",
-          "abhi admin dashboard backend se connect nahi hai"
+          "Assessment submit होने के बाद क्या होना चाहिए - Wellness Report"
         ]
       },
       "acceptanceCriteria": [
-        "useAdminAssessments hook calls backend query function and returns assessment list",
-        "Loading states are properly handled during data fetch",
-        "Error states are handled and displayed to user",
-        "Data is properly transformed from backend format to frontend AdminAssessmentRow type"
+        "User is redirected to results/wellness report page after submission",
+        "Results page displays the calculated scores and analysis",
+        "Navigation occurs only after successful backend submission"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Connect QuickStatsCards component to display real statistics from backend data instead of calculating from empty arrays",
-      "target": "frontend",
+      "text": "Verify that submitted assessments appear in the Admin Dashboard after submission",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-final"
+          "msg-user-final"
         ],
         "quotes": [
-          "Stats cards ko real data se populate karuga",
-          "Stats cards (Total Assessments, Average Score) update nahi ho rahe"
+          "Dashboard par submition ke baad show kare"
         ]
       },
       "acceptanceCriteria": [
-        "Total Assessments card displays actual count from backend",
-        "Average Score card shows calculated average from all submissions",
-        "Alert Users card shows count of users with low scores",
-        "Recent Submissions card shows count of assessments from last 7 days",
-        "All cards update in real-time when new assessments are submitted"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Connect UserAssessmentDataTable component to display the list of submitted assessments fetched from backend with all filtering and sorting functionality working on real data",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-final"
-        ],
-        "quotes": [
-          "Submitted assessments ki proper list with details",
-          "Dono me se koi na ho raha, List and Card koi na show ho raha"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Table displays all submitted assessments from backend",
-        "Search filter works on student names",
-        "Date range filter works on submission timestamps",
-        "Score range filter works on assessment scores",
-        "Sorting functionality works on all columns",
-        "Pagination works correctly with real data",
-        "CSV export includes all real assessment data"
+        "Submitted assessment appears in admin dashboard table",
+        "Dashboard displays correct user data and scores",
+        "Data refresh shows newly submitted assessments without page reload"
       ]
     }
   ],
   "constraints": [
-    "Maintain single-actor architecture in backend/main.mo",
-    "Do not modify immutable frontend paths: useInternetIdentity.ts, useInternetIdentity.tsx, useActor.ts, main.tsx, frontend/src/components/ui",
-    "Preserve existing assessment submission flow that generates success message and Assessment Report",
-    "Use existing AdminAssessmentRow type structure from frontend/src/types/admin.ts",
-    "Maintain compatibility with existing filtering, sorting, and pagination logic in UserAssessmentDataTable"
+    "Do not modify the backend schema or main.mo actor structure",
+    "Preserve existing assessment scoring logic in scoringUtils.ts",
+    "Keep the four-section assessment flow intact",
+    "Do not change immutable frontend paths: useInternetIdentity.ts, useInternetIdentity.tsx, useActor.ts, main.tsx, components/ui"
   ],
   "nonGoals": [
-    "Changing the assessment submission UI or flow",
-    "Modifying the assessment results page or report generation",
-    "Adding new statistics beyond the four existing stat cards",
-    "Changing the admin dashboard layout or styling",
-    "Adding user authentication beyond existing admin check"
+    "Redesigning the assessment UI or changing question content",
+    "Adding new assessment sections or questions",
+    "Modifying the admin authentication system",
+    "Changing the PDF generation functionality"
   ],
   "imageRequirements": {
     "required": [],

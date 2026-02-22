@@ -21,21 +21,6 @@ export interface AssessmentSubmission {
     'medicalHistory' : MedicalHistory,
   },
 }
-export interface AssessmentSummary {
-  'id' : Id,
-  'recommendationsCount' : bigint,
-  'alertScoreCount' : bigint,
-  'scores' : SectionScores,
-  'user' : [] | [UserProfile],
-  'atRiskCount' : bigint,
-  'alertScaleAverage' : number,
-  'totalScore' : bigint,
-  'atRiskScaleAverage' : number,
-  'problems' : Array<string>,
-  'timestamp' : Time,
-  'elevatedRiskScaleAverage' : number,
-  'elevatedRiskCount' : bigint,
-}
 export type Id = bigint;
 export interface MedicalHistory {
   'hasProblemsWithPregnancy' : boolean,
@@ -114,12 +99,8 @@ export interface _SERVICE {
       'averageScore' : number,
     }
   >,
-  'getAllAssessmentSummaries' : ActorMethod<[], Array<AssessmentSummary>>,
+  'getAllAssessments' : ActorMethod<[], Array<[Id, AssessmentSubmission]>>,
   'getAllSections' : ActorMethod<[], Array<SectionId>>,
-  'getAssessmentSubmissionById' : ActorMethod<
-    [bigint],
-    [] | [AssessmentSubmission]
-  >,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getSectionScoringDetails' : ActorMethod<
@@ -145,8 +126,8 @@ export interface _SERVICE {
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isAdminUser' : ActorMethod<[string], boolean>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
-  'saveAssessmentSubmission' : ActorMethod<[AssessmentSubmission], bigint>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'submitAssessment' : ActorMethod<[AssessmentSubmission], bigint>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

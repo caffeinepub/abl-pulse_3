@@ -2,10 +2,50 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-usequeries-hook-to-fetch-real-assessment-data-from-backend-using-the-new-query-functions-instead-of-returning-empty-arrays",
-      "featureTitle": "Update useQueries hook to fetch real assessment data from backend using the new query functions instead of returning empty arrays",
+      "featureId": "feature-fix-the-complete-assessment-button-click-handler-in-section4-tsx-to-properly-trigger-the-assessment-submission-process-when-clicked",
+      "featureTitle": "Fix the Complete Assessment button click handler in Section4.tsx to properly trigger the assessment submission process when clicked",
       "files": [
-        "frontend/src/hooks/useQueries.ts"
+        "frontend/src/pages/Section4.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-ensure-assessment-data-is-successfully-submitted-to-the-motoko-backend-via-actor-submitassessment-when-complete-assessment-button-is-clicked",
+      "featureTitle": "Ensure assessment data is successfully submitted to the Motoko backend via actor.submitAssessment() when Complete Assessment button is clicked",
+      "files": [
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/Section4.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-after-successful-assessment-submission-automatically-navigate-user-to-the-wellness-report-page-displaying-their-results",
+      "featureTitle": "After successful assessment submission, automatically navigate user to the Wellness Report page displaying their results",
+      "files": [
+        "frontend/src/pages/ResultsPage.tsx",
+        "frontend/src/pages/Section4.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -21,12 +61,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-connect-quickstatscards-component-to-display-real-statistics-from-backend-data-instead-of-calculating-from-empty-arrays",
-      "featureTitle": "Connect QuickStatsCards component to display real statistics from backend data instead of calculating from empty arrays",
+      "featureId": "feature-verify-that-submitted-assessments-appear-in-the-admin-dashboard-after-submission",
+      "featureTitle": "Verify that submitted assessments appear in the Admin Dashboard after submission",
       "files": [
-        "frontend/src/components/admin/QuickStatsCards.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/utils/adminStatsCalculator.ts"
+        "frontend/src/hooks/useQueries.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",

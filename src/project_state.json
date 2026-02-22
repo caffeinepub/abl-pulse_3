@@ -1,63 +1,51 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "New project",
-  "architectural_notes": [],
+  "summary": "Employee Wellness Assessment application with admin dashboard for monitoring submissions and generating wellness reports",
+  "architectural_notes": [
+    "Assessment form submits data and generates wellness report upon completion",
+    "Admin dashboard displays all submitted assessments",
+    "Complete Assessment button triggers submission workflow"
+  ],
   "known_issues": [
-    "Admin dashboard not connected to backend - submitted assessments not displaying in list or stats cards",
-    "Assessment submission works and shows report, but data not persisting to admin view"
+    "Complete Assessment button not responding to clicks - submission functionality not working"
   ],
   "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-update-usequeries-hook-to-fetch-real-assessment-data-from-backend-using-the-new-query-functions-instead-of-returning-empty-arrays",
-      "title": "Update useQueries hook to fetch real assessment data from backend using the new query functions instead of returning empty arrays",
+      "id": "feature-fix-the-complete-assessment-button-click-handler-in-section4-tsx-to-properly-trigger-the-assessment-submission-process-when-clicked",
+      "title": "Fix the Complete Assessment button click handler in Section4.tsx to properly trigger the assessment submission process when clicked",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-assessment-data-is-successfully-submitted-to-the-motoko-backend-via-actor-submitassessment-when-complete-assessment-button-is-clicked",
+      "title": "Ensure assessment data is successfully submitted to the Motoko backend via actor.submitAssessment() when Complete Assessment button is clicked",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-after-successful-assessment-submission-automatically-navigate-user-to-the-wellness-report-page-displaying-their-results",
+      "title": "After successful assessment submission, automatically navigate user to the Wellness Report page displaying their results",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-connect-quickstatscards-component-to-display-real-statistics-from-backend-data-instead-of-calculating-from-empty-arrays",
-      "title": "Connect QuickStatsCards component to display real statistics from backend data instead of calculating from empty arrays",
+      "id": "feature-verify-that-submitted-assessments-appear-in-the-admin-dashboard-after-submission",
+      "title": "Verify that submitted assessments appear in the Admin Dashboard after submission",
       "reqIds": [
         "REQ-4"
       ],
       "version": 1
     }
   ],
-  "new_feature_requests": [
-    {
-      "id": "AR-1",
-      "summary": "Connect admin dashboard to backend database to display submitted assessments list and stats cards",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Implement backend query function to retrieve all submitted assessments with details including student name, score, total questions, submission timestamp, and answers breakdown",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-3",
-      "summary": "Implement backend function to calculate and return admin dashboard statistics including total assessment count, average score, alert users count, and recent submissions count",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-6",
-      "summary": "Connect UserAssessmentDataTable component to display the list of submitted assessments fetched from backend with all filtering and sorting functionality working on real data",
-      "reqIds": [
-        "REQ-5"
-      ],
-      "status": "pending"
-    }
-  ],
+  "new_feature_requests": [],
   "projectName": "ABL Pulse",
   "clarification_mode": "instant",
   "clarification_rounds": 0
