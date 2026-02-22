@@ -54,7 +54,7 @@ export default function AdminDashboardPage() {
           )}
 
           {/* Quick Stats Cards */}
-          <QuickStatsCards data={assessments} isLoading={isLoading} />
+          <QuickStatsCards />
 
           {/* Assessment Data Table */}
           <div className="space-y-4">

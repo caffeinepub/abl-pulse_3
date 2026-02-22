@@ -1,29 +1,24 @@
-// This module defines the backend implementation for managing assessment and wellness reports.
-// It includes type definitions, persistent storage, and core functions for handling user data.
-
 import Time "mo:core/Time";
 import Map "mo:core/Map";
 import Nat "mo:core/Nat";
 import Text "mo:core/Text";
 import Array "mo:core/Array";
+import Iter "mo:core/Iter";
 import Runtime "mo:core/Runtime";
 import Principal "mo:core/Principal";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
 actor {
-  // Initialize the access control system
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
 
-  // User profile type
   public type UserProfile = {
     name : Text;
   };
 
   let userProfiles = Map.empty<Principal, UserProfile>();
 
-  // User profile management functions
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can access profiles");
@@ -45,15 +40,8 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  // Unique IDs for sections
-  public type SectionId = {
-    #sleep;
-    #hydration;
-    #exercise;
-    #diet;
-  };
+  public type SectionId = { #sleep; #hydration; #exercise; #diet };
 
-  // Scores for each section (0-40)
   public type SectionScores = {
     sleep : Nat;
     hydration : Nat;
@@ -61,7 +49,6 @@ actor {
     diet : Nat;
   };
 
-  // Medical history type
   public type MedicalHistory = {
     hasProblemsWithBloodPressure : Bool;
     hasProblemsWithSugar : Bool;
@@ -75,7 +62,6 @@ actor {
     hasProblemsWithAlcoholUse : Bool;
   };
 
-  // User's complete answers
   public type UserAnswers = {
     sleep : [Nat];
     hydration : [Nat];
@@ -83,7 +69,6 @@ actor {
     diet : [Nat];
   };
 
-  // Individual tip
   public type SolutionTip = {
     section : SectionId;
     text : Text;
@@ -104,8 +89,7 @@ actor {
     medicalFitForAlcoholUse : Bool;
   };
 
-  // Overall report structure
-  public type CompleteWellnessReport = {
+  public type AssessmentSubmission = {
     healthProfile : {
       answers : UserAnswers;
       medicalHistory : MedicalHistory;
@@ -114,154 +98,178 @@ actor {
     timestamp : Time.Time;
     recommendations : [SolutionTip];
     problems : [Text];
+    user : ?UserProfile;
   };
 
   public type Id = Nat;
 
-  var nextWellnessReportId = 0;
+  public type AssessmentSummary = {
+    id : Id;
+    timestamp : Time.Time;
+    user : ?UserProfile;
+    totalScore : Nat;
+    scores : SectionScores;
+    alertScoreCount : Nat;
+    atRiskCount : Nat;
+    elevatedRiskCount : Nat;
+    alertScaleAverage : Float;
+    atRiskScaleAverage : Float;
+    elevatedRiskScaleAverage : Float;
+    recommendationsCount : Nat;
+    problems : [Text];
+  };
 
-  // Storage for wellness reports with owner tracking
-  let wellnessReports = Map.empty<Id, CompleteWellnessReport>();
-  let reportOwners = Map.empty<Id, Principal>();
+  var nextAssessmentSubmissionId = 0;
+  let assessmentSubmissions = Map.empty<Id, AssessmentSubmission>();
+  let submissionOwners = Map.empty<Id, Principal>();
 
-  // Helper function to incrementally generate unique report IDs
-  func getNextWellnessReportId() : Nat {
-    let id = nextWellnessReportId;
-    nextWellnessReportId += 1;
+  func getNextAssessmentSubmissionId() : Nat {
+    let id = nextAssessmentSubmissionId;
+    nextAssessmentSubmissionId += 1;
     id;
   };
 
-  func getSeverityRanges() : [(Text, Nat, Nat)] {
-    [
-      ("Low", 0, 13),
-      ("Medium", 14, 27),
-      ("High", 28, 40),
-    ];
-  };
-
-  // Validate answers array lengths and values
-  func validateAnswers(answers : [Nat]) : [Nat] {
-    if (answers.size() <= 10) {
-      Runtime.trap("Each section must have at least 10 answers");
-    };
-    answers.map(
-      func(score) {
-        if (score <= 0 or score > 4) {
-          Runtime.trap("Each answer must be between 0 and 4, inclusive");
-        };
-        score;
-      }
-    );
-  };
-
-  func validateSectionScores(scores : SectionScores) : SectionScores {
-    let limits = (0, 40);
-    let sectionIds : [SectionId] = [#sleep, #hydration, #exercise, #diet];
-    let scoreRange = Nat.range(limits.0, limits.1 + 1).toArray();
-
-    let checkInRange = func(score : Nat) : Bool {
-      scoreRange.find(func(x) { x == score }) != null;
-    };
-
-    let checkRange = func(_section : SectionId, score : Nat) : Bool {
-      checkInRange(score);
-    };
-
-    let rangeResults = sectionIds.map(
-      func(section) {
-        switch (section) {
-          case (#sleep) { checkRange(section, scores.sleep) };
-          case (#hydration) { checkRange(section, scores.hydration) };
-          case (#exercise) { checkRange(section, scores.exercise) };
-          case (#diet) { checkRange(section, scores.diet) };
-        };
-      }
-    );
-
-    if (rangeResults.find(func(x) { not x }) == null) {
-      scores;
-    } else {
-      Runtime.trap("All sections must have values between " # limits.0.toText() # " and " # limits.1.toText());
-    };
-  };
-
-  // Exposed service to save a new report, returns unique report ID
-  public shared ({ caller }) func saveWellnessReport(report : CompleteWellnessReport) : async Nat {
+  public shared ({ caller }) func saveAssessmentSubmission(submission : AssessmentSubmission) : async Nat {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can save wellness reports");
+      Runtime.trap("Unauthorized: Only users can save assessment submissions");
     };
-    let id = getNextWellnessReportId();
-    wellnessReports.add(id, report);
-    reportOwners.add(id, caller);
+    let id = getNextAssessmentSubmissionId();
+    assessmentSubmissions.add(id, submission);
+    submissionOwners.add(id, caller);
     id;
   };
 
-  // Exposed service to retrieve a specific report by ID
-  public shared ({ caller }) func getWellnessReportById(id : Nat) : async ?CompleteWellnessReport {
-    // Check if caller owns the report or is an admin
-    switch (reportOwners.get(id)) {
+  public query ({ caller }) func getAssessmentSubmissionById(id : Nat) : async ?AssessmentSubmission {
+    switch (submissionOwners.get(id)) {
       case null { null };
       case (?owner) {
         if (caller != owner and not AccessControl.isAdmin(accessControlState, caller)) {
-          Runtime.trap("Unauthorized: Can only view your own wellness reports");
+          Runtime.trap("Unauthorized: Can only view your own assessment submissions");
         };
-        wellnessReports.get(id);
+        assessmentSubmissions.get(id);
       };
     };
   };
 
-  // Exposed service to retrieve all reports (admin-only due to sensitive health data)
-  public query ({ caller }) func getAllWellnessReports() : async [(Nat, CompleteWellnessReport)] {
+  public query ({ caller }) func getAllAssessmentSummaries() : async [AssessmentSummary] {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can view all wellness reports");
+      Runtime.trap("Unauthorized: Only admins can view all assessment summaries");
     };
-    wellnessReports.toArray();
+
+    let mutableDistribution = Array.tabulate(11, func(_) { 0 });
+    assessmentSubmissions.toArray().map<(Id, AssessmentSubmission), AssessmentSummary>(func((id, submission)) {
+      let totalScore = submission.scores.sleep + submission.scores.hydration + submission.scores.exercise + submission.scores.diet;
+
+      let (alertScoreCount, atRiskCount, elevatedRiskCount) = if (totalScore <= 20) {
+        (submission.problems.size(), 0, 0);
+      } else if (totalScore <= 40 and totalScore > 20) {
+        (0, submission.problems.size(), 0);
+      } else if (totalScore > 40) {
+        (0, 0, submission.problems.size());
+      } else { (0, 0, 0) };
+
+      let avg = func(scores : [Nat]) : Float {
+        let totalArr = scores.foldLeft(0, func(acc, score) { acc + score });
+        if (scores.size() > 0) {
+          totalArr.toFloat() / scores.size().toFloat();
+        } else { 0.0 };
+      };
+
+      {
+        id = id;
+        timestamp = submission.timestamp;
+        user = submission.user;
+        totalScore;
+        scores = submission.scores;
+        alertScoreCount;
+        atRiskCount;
+        elevatedRiskCount;
+        alertScaleAverage = 0.0;
+        atRiskScaleAverage = 0.0;
+        elevatedRiskScaleAverage = 0.0;
+        recommendationsCount = submission.recommendations.size();
+        problems = submission.problems;
+      };
+    });
   };
 
-  // Generate standard section structure
-  public func getAllSections() : async [SectionId] {
+  public query ({ caller }) func getAdminDashboardStats() : async {
+    totalAssessments : Nat;
+    averageScore : Float;
+    alertUsersCount : Nat;
+    recentSubmissionsCount : Nat;
+    scoreDistribution : [Float];
+    scoringSummary : [Float];
+  } {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can view dashboard statistics");
+    };
+    let totalAssessments = assessmentSubmissions.size();
+    if (totalAssessments == 0) {
+      return {
+        totalAssessments = 0;
+        averageScore = 0;
+        alertUsersCount = 0;
+        recentSubmissionsCount = 0;
+        scoreDistribution = [];
+        scoringSummary = [];
+      };
+    };
+
+    var totalPoints = 0;
+    var alertUsersCount = 0;
+    var recentSubmissionsCount = 0;
+    var distribution = Array.tabulate(11, func(_) { 0 });
+
+    let now = Time.now();
+    let submissionsArray = assessmentSubmissions.values().toArray();
+
+    for (submission in submissionsArray.values()) {
+      let totalScore = submission.scores.sleep + submission.scores.hydration + submission.scores.exercise + submission.scores.diet;
+      totalPoints += totalScore;
+
+      let scoreRange = totalScore / 10;
+      if (scoreRange < 11) {
+        let tempDist = Array.tabulate(
+          11,
+          func(i) {
+            if (i == scoreRange) { distribution[i] + 1 } else { distribution[i] };
+          },
+        );
+        distribution := tempDist;
+      };
+
+      if (totalScore < 20) {
+        alertUsersCount += 1;
+      };
+
+      if (now - submission.timestamp < 30 * 24 * 60 * 60 * 1_000_000_000) {
+        recentSubmissionsCount += 1;
+      };
+    };
+
+    let averageScore = totalPoints.toFloat() / totalAssessments.toFloat();
+    {
+      totalAssessments;
+      averageScore;
+      alertUsersCount;
+      recentSubmissionsCount;
+      scoreDistribution = distribution.map(func(count) { count.toFloat() });
+      scoringSummary = [];
+    };
+  };
+
+  public query func getAllSections() : async [SectionId] {
     [#sleep, #hydration, #exercise, #diet];
   };
 
-  // Validate and calculate section score (max 40)
-  func calculateSectionScore(answers : [Nat]) : Nat {
-    let validatedAnswers = validateAnswers(answers);
-    let totalScore = validatedAnswers.foldLeft(0, func(acc, score) { acc + score });
-    Nat.min(totalScore, 40); // Ensure max score doesn't exceed 40
-  };
-
-  // Helper function to calculate scores for all sections
-  func calculateSectionScores(answers : UserAnswers) : SectionScores {
-    validateSectionScores(
-      {
-        sleep = calculateSectionScore(answers.sleep);
-        hydration = calculateSectionScore(answers.hydration);
-        exercise = calculateSectionScore(answers.exercise);
-        diet = calculateSectionScore(answers.diet);
-      }
-    );
-  };
-
-  // Medical history validation
-  public query ({ caller }) func validateMedicalHistory(medicalHistory : MedicalHistory) : async MedicalHistory {
-    medicalHistory;
-  };
-
-  // Helper function to combine answers and get scores
-  func calculateScoresFromAnswers(userAnswers : UserAnswers) : SectionScores {
-    calculateSectionScores(userAnswers);
-  };
-
-  // Section question mapping
-  public func getSectionScoringDetails() : async {
-    sectionStartQuestion : [(SectionId, Nat)]; // Start of each section
-    sectionEndQuestion : [(SectionId, Nat)]; // End of each section
-    scoringReference : [(Nat, Text)]; // how to score answers
-    questionPoints : [(SectionId, [Nat])]; // Points per question
+  public query func getSectionScoringDetails() : async {
+    sectionStartQuestion : [(SectionId, Nat)];
+    sectionEndQuestion : [(SectionId, Nat)];
+    scoringReference : [(Nat, Text)];
+    questionPoints : [(SectionId, [Nat])];
   } {
     let sections = [#sleep, #hydration, #exercise, #diet];
-
-    // Manually construct zip functionality for start and end questions
     func manualZip<T, U>(arr1 : [T], arr2 : [U]) : [(T, U)] {
       Array.tabulate<(T, U)>(
         arr1.size(),
@@ -270,10 +278,8 @@ actor {
         },
       );
     };
-
     let startQuestions = manualZip(sections, [0, 10, 20, 30]);
     let endQuestions = manualZip(sections, [9, 19, 29, 39]);
-
     let scoringReference = [
       (0, "Very Poor/Nonexistent Habit"),
       (1, "Rarely Engage (10-20% effort)"),
@@ -281,15 +287,12 @@ actor {
       (3, "Good Consistency (70-80% effort)"),
       (4, "Excellent, Consistent Habit (90-100%)"),
     ];
-
-    // Map all questions to 0-4 points
     let questionPoints = sections.map(
       func(section) {
         let points = Array.tabulate(10, func(i) { i });
         (section, points);
       }
     );
-
     {
       sectionStartQuestion = startQuestions;
       sectionEndQuestion = endQuestions;
@@ -298,57 +301,44 @@ actor {
     };
   };
 
-  //----------------------------------------------
-  // Handling of test data
-  //----------------------------------------------
-  public func getTestData() : async (SectionScores, SectionScores, SectionScores, MedicalHistory, MedicalHistory, MedicalHistory) {
-    ({ sleep = 39; hydration = 30; exercise = 34; diet = 39 }, // healthy
-     { sleep = 17; hydration = 20; exercise = 27; diet = 18 }, // serious issues
-     { sleep = 11; hydration = 9; exercise = 17; diet = 12 }, // problems in all sections
-     {
-       hasProblemsWithBloodPressure = true;
-       hasProblemsWithSugar = true;
-       hasProblemsWithKidney = false;
-       hasProblemsWithPregnancy = false;
-       hasProblemsWithAnemia = false;
-       hasProblemsWithHeartProblems = true;
-       hasProblemsWithThyroid = false;
-       hasProblemsWithCholesterol = false;
-       hasProblemsWithHighBMI = false;
-       hasProblemsWithAlcoholUse = false;
-     },
-     {
-       hasProblemsWithBloodPressure = true;
-       hasProblemsWithSugar = false;
-       hasProblemsWithKidney = false;
-       hasProblemsWithPregnancy = false;
-       hasProblemsWithAnemia = false;
-       hasProblemsWithHeartProblems = false;
-       hasProblemsWithThyroid = false;
-       hasProblemsWithCholesterol = false;
-       hasProblemsWithHighBMI = false;
-       hasProblemsWithAlcoholUse = false;
-     },
-     {
-       hasProblemsWithBloodPressure = false;
-       hasProblemsWithSugar = false;
-       hasProblemsWithKidney = false;
-       hasProblemsWithPregnancy = false;
-       hasProblemsWithAnemia = false;
-       hasProblemsWithHeartProblems = false;
-       hasProblemsWithThyroid = false;
-       hasProblemsWithCholesterol = false;
-       hasProblemsWithHighBMI = false;
-       hasProblemsWithAlcoholUse = false;
-     });
+  public query func getTestData() : async (SectionScores, SectionScores, SectionScores, MedicalHistory, MedicalHistory, MedicalHistory) {
+    ({ sleep = 39; hydration = 30; exercise = 34; diet = 39 }, { sleep = 17; hydration = 20; exercise = 27; diet = 18 }, { sleep = 11; hydration = 9; exercise = 17; diet = 12 }, {
+      hasProblemsWithBloodPressure = true;
+      hasProblemsWithSugar = true;
+      hasProblemsWithKidney = false;
+      hasProblemsWithPregnancy = false;
+      hasProblemsWithAnemia = false;
+      hasProblemsWithHeartProblems = true;
+      hasProblemsWithThyroid = false;
+      hasProblemsWithCholesterol = false;
+      hasProblemsWithHighBMI = false;
+      hasProblemsWithAlcoholUse = false;
+    }, {
+      hasProblemsWithBloodPressure = true;
+      hasProblemsWithSugar = false;
+      hasProblemsWithKidney = false;
+      hasProblemsWithPregnancy = false;
+      hasProblemsWithAnemia = false;
+      hasProblemsWithHeartProblems = false;
+      hasProblemsWithThyroid = false;
+      hasProblemsWithCholesterol = false;
+      hasProblemsWithHighBMI = false;
+      hasProblemsWithAlcoholUse = false;
+    }, {
+      hasProblemsWithBloodPressure = false;
+      hasProblemsWithSugar = false;
+      hasProblemsWithKidney = false;
+      hasProblemsWithPregnancy = false;
+      hasProblemsWithAnemia = false;
+      hasProblemsWithHeartProblems = false;
+      hasProblemsWithThyroid = false;
+      hasProblemsWithCholesterol = false;
+      hasProblemsWithHighBMI = false;
+      hasProblemsWithAlcoholUse = false;
+    });
   };
 
-  // Direct backend check for persistent admin email.
   public query ({ caller }) func isAdminUser(_email : Text) : async Bool {
-    // Only accept single admin email instead of hard-to-update persistent Map.
-    true;
+    AccessControl.isAdmin(accessControlState, caller);
   };
-
-  // Variable to store previous persistent adminEmails map.
-  var adminEmails : Map.Map<Text, Bool> = Map.empty<Text, Bool>();
 };

@@ -1,20 +1,11 @@
-import { AdminAssessmentRow } from '@/types/admin';
 import { StatCard } from './StatCard';
 import { Users, TrendingUp, AlertTriangle, Calendar } from 'lucide-react';
-import {
-  calculateTotalAssessments,
-  calculateAverageScore,
-  calculateAlertUsers,
-  calculateRecentSubmissions,
-} from '@/utils/adminStatsCalculator';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAdminStats } from '@/hooks/useQueries';
 
-interface QuickStatsCardsProps {
-  data: AdminAssessmentRow[];
-  isLoading?: boolean;
-}
+export function QuickStatsCards() {
+  const { data: stats, isLoading } = useAdminStats();
 
-export function QuickStatsCards({ data, isLoading }: QuickStatsCardsProps) {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -25,10 +16,10 @@ export function QuickStatsCards({ data, isLoading }: QuickStatsCardsProps) {
     );
   }
 
-  const totalAssessments = calculateTotalAssessments(data);
-  const averageScore = calculateAverageScore(data);
-  const alertUsers = calculateAlertUsers(data);
-  const recentSubmissions = calculateRecentSubmissions(data);
+  const totalAssessments = stats?.totalAssessments || 0;
+  const averageScore = stats?.averageScore || 0;
+  const alertUsers = stats?.alertUsersCount || 0;
+  const recentSubmissions = stats?.recentSubmissionsCount || 0;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -41,7 +32,7 @@ export function QuickStatsCards({ data, isLoading }: QuickStatsCardsProps) {
       />
       <StatCard
         title="Average Score"
-        value={`${averageScore}/160`}
+        value={`${Math.round(averageScore)}/160`}
         icon={<TrendingUp className="h-5 w-5" />}
         variant="success"
         subtitle="Overall mean score"
@@ -58,7 +49,7 @@ export function QuickStatsCards({ data, isLoading }: QuickStatsCardsProps) {
         value={recentSubmissions}
         icon={<Calendar className="h-5 w-5" />}
         variant="warning"
-        subtitle="Last 7 days"
+        subtitle="Last 30 days"
       />
     </div>
   );

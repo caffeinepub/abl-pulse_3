@@ -45,9 +45,26 @@ export interface MedicalHistory {
     hasProblemsWithThyroid: boolean;
     hasProblemsWithHighBMI: boolean;
 }
-export interface CompleteWellnessReport {
+export type Id = bigint;
+export interface AssessmentSummary {
+    id: Id;
+    recommendationsCount: bigint;
+    alertScoreCount: bigint;
+    scores: SectionScores;
+    user?: UserProfile;
+    atRiskCount: bigint;
+    alertScaleAverage: number;
+    totalScore: bigint;
+    atRiskScaleAverage: number;
+    problems: Array<string>;
+    timestamp: Time;
+    elevatedRiskScaleAverage: number;
+    elevatedRiskCount: bigint;
+}
+export interface AssessmentSubmission {
     recommendations: Array<SolutionTip>;
     scores: SectionScores;
+    user?: UserProfile;
     problems: Array<string>;
     timestamp: Time;
     healthProfile: {
@@ -98,8 +115,17 @@ export enum Variant_low_high_none {
 }
 export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    getAdminDashboardStats(): Promise<{
+        recentSubmissionsCount: bigint;
+        scoringSummary: Array<number>;
+        alertUsersCount: bigint;
+        scoreDistribution: Array<number>;
+        totalAssessments: bigint;
+        averageScore: number;
+    }>;
+    getAllAssessmentSummaries(): Promise<Array<AssessmentSummary>>;
     getAllSections(): Promise<Array<SectionId>>;
-    getAllWellnessReports(): Promise<Array<[bigint, CompleteWellnessReport]>>;
+    getAssessmentSubmissionById(id: bigint): Promise<AssessmentSubmission | null>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getSectionScoringDetails(): Promise<{
@@ -110,10 +136,8 @@ export interface backendInterface {
     }>;
     getTestData(): Promise<[SectionScores, SectionScores, SectionScores, MedicalHistory, MedicalHistory, MedicalHistory]>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
-    getWellnessReportById(id: bigint): Promise<CompleteWellnessReport | null>;
     isAdminUser(_email: string): Promise<boolean>;
     isCallerAdmin(): Promise<boolean>;
+    saveAssessmentSubmission(submission: AssessmentSubmission): Promise<bigint>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    saveWellnessReport(report: CompleteWellnessReport): Promise<bigint>;
-    validateMedicalHistory(medicalHistory: MedicalHistory): Promise<MedicalHistory>;
 }

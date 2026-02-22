@@ -1,58 +1,127 @@
 {
   "kind": "build_request",
-  "title": "Fix Admin Button Footer Link to Admin Dashboard",
+  "title": "Connect Admin Dashboard to Backend Database",
   "projectName": "ABL Pulse",
-  "priority": "normal",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the admin button in the ContactFooter component to navigate directly to the admin dashboard page (/admin) without requiring authentication or authorization checks",
-      "target": "frontend",
+      "text": "Implement backend query function to retrieve all submitted assessments with details including student name, score, total questions, submission timestamp, and answers breakdown",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-user-3"
+          "msg-final"
         ],
         "quotes": [
-          "Admin Authentication: admin dashboard ko directly accessible hona chahiye",
-          "Admin Button Location: ABL Pulse ke Footer me",
-          "Sirf Link Karna hai. Koi Work Is time nahi karna hai, only link karna hai"
+          "Admin Dashboard mein submitted assessments ki list nahi dikh rahi",
+          "Assessment data store karne ke liye proper functions banaunga",
+          "Admin ke liye assessments list retrieve karne ka endpoint"
         ]
       },
       "acceptanceCriteria": [
-        "Clicking the admin button in the footer navigates to the admin dashboard page",
-        "No 'Access Denied' screen appears when clicking the admin button",
-        "Admin dashboard page loads directly without authentication checks"
+        "Backend function returns array of all assessment submissions",
+        "Each assessment includes id, studentName, score, totalQuestions, submittedAt timestamp, and detailed answers",
+        "Function is accessible to admin users only"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Remove or bypass authentication/authorization checks on the AdminDashboardPage component to allow direct access without login",
-      "target": "frontend",
+      "text": "Implement backend function to calculate and return admin dashboard statistics including total assessment count, average score, alert users count, and recent submissions count",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-user-3"
+          "msg-final"
         ],
         "quotes": [
-          "admin dashboard ko directly accessible hona chahiye"
+          "Stats cards (Total Assessments, Average Score, etc.) update nahi ho rahe",
+          "Stats calculate karne ka logic (total count, average score, etc.)"
         ]
       },
       "acceptanceCriteria": [
-        "Admin dashboard page renders without checking for authentication state",
-        "Users can view admin dashboard content immediately upon navigation",
-        "No access denied or login redirect logic blocks access to the admin dashboard"
+        "Function returns total count of all assessments",
+        "Function calculates and returns average score across all assessments",
+        "Function returns count of users in alert category (low scores)",
+        "Function returns count of assessments submitted in last 7 days"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Update useQueries hook to fetch real assessment data from backend using the new query functions instead of returning empty arrays",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-final"
+        ],
+        "quotes": [
+          "Backend se data fetch karne ke liye React Query hooks",
+          "abhi admin dashboard backend se connect nahi hai"
+        ]
+      },
+      "acceptanceCriteria": [
+        "useAdminAssessments hook calls backend query function and returns assessment list",
+        "Loading states are properly handled during data fetch",
+        "Error states are handled and displayed to user",
+        "Data is properly transformed from backend format to frontend AdminAssessmentRow type"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Connect QuickStatsCards component to display real statistics from backend data instead of calculating from empty arrays",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-final"
+        ],
+        "quotes": [
+          "Stats cards ko real data se populate karuga",
+          "Stats cards (Total Assessments, Average Score) update nahi ho rahe"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Total Assessments card displays actual count from backend",
+        "Average Score card shows calculated average from all submissions",
+        "Alert Users card shows count of users with low scores",
+        "Recent Submissions card shows count of assessments from last 7 days",
+        "All cards update in real-time when new assessments are submitted"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Connect UserAssessmentDataTable component to display the list of submitted assessments fetched from backend with all filtering and sorting functionality working on real data",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-final"
+        ],
+        "quotes": [
+          "Submitted assessments ki proper list with details",
+          "Dono me se koi na ho raha, List and Card koi na show ho raha"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Table displays all submitted assessments from backend",
+        "Search filter works on student names",
+        "Date range filter works on submission timestamps",
+        "Score range filter works on assessment scores",
+        "Sorting functionality works on all columns",
+        "Pagination works correctly with real data",
+        "CSV export includes all real assessment data"
       ]
     }
   ],
   "constraints": [
-    "Do not modify the backend authentication logic",
-    "Only update frontend routing and navigation behavior",
-    "Keep all existing admin dashboard functionality intact"
+    "Maintain single-actor architecture in backend/main.mo",
+    "Do not modify immutable frontend paths: useInternetIdentity.ts, useInternetIdentity.tsx, useActor.ts, main.tsx, frontend/src/components/ui",
+    "Preserve existing assessment submission flow that generates success message and Assessment Report",
+    "Use existing AdminAssessmentRow type structure from frontend/src/types/admin.ts",
+    "Maintain compatibility with existing filtering, sorting, and pagination logic in UserAssessmentDataTable"
   ],
   "nonGoals": [
-    "Adding new admin features or functionality",
-    "Implementing proper authentication system",
-    "Modifying admin dashboard UI or data display",
-    "Adding security measures or access control"
+    "Changing the assessment submission UI or flow",
+    "Modifying the assessment results page or report generation",
+    "Adding new statistics beyond the four existing stat cards",
+    "Changing the admin dashboard layout or styling",
+    "Adding user authentication beyond existing admin check"
   ],
   "imageRequirements": {
     "required": [],

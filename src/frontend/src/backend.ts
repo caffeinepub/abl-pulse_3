@@ -127,9 +127,26 @@ export interface MedicalHistory {
     hasProblemsWithThyroid: boolean;
     hasProblemsWithHighBMI: boolean;
 }
-export interface CompleteWellnessReport {
+export type Id = bigint;
+export interface AssessmentSummary {
+    id: Id;
+    recommendationsCount: bigint;
+    alertScoreCount: bigint;
+    scores: SectionScores;
+    user?: UserProfile;
+    atRiskCount: bigint;
+    alertScaleAverage: number;
+    totalScore: bigint;
+    atRiskScaleAverage: number;
+    problems: Array<string>;
+    timestamp: Time;
+    elevatedRiskScaleAverage: number;
+    elevatedRiskCount: bigint;
+}
+export interface AssessmentSubmission {
     recommendations: Array<SolutionTip>;
     scores: SectionScores;
+    user?: UserProfile;
     problems: Array<string>;
     timestamp: Time;
     healthProfile: {
@@ -181,8 +198,17 @@ export enum Variant_low_high_none {
 export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    getAdminDashboardStats(): Promise<{
+        recentSubmissionsCount: bigint;
+        scoringSummary: Array<number>;
+        alertUsersCount: bigint;
+        scoreDistribution: Array<number>;
+        totalAssessments: bigint;
+        averageScore: number;
+    }>;
+    getAllAssessmentSummaries(): Promise<Array<AssessmentSummary>>;
     getAllSections(): Promise<Array<SectionId>>;
-    getAllWellnessReports(): Promise<Array<[bigint, CompleteWellnessReport]>>;
+    getAssessmentSubmissionById(id: bigint): Promise<AssessmentSubmission | null>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getSectionScoringDetails(): Promise<{
@@ -193,14 +219,12 @@ export interface backendInterface {
     }>;
     getTestData(): Promise<[SectionScores, SectionScores, SectionScores, MedicalHistory, MedicalHistory, MedicalHistory]>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
-    getWellnessReportById(id: bigint): Promise<CompleteWellnessReport | null>;
     isAdminUser(_email: string): Promise<boolean>;
     isCallerAdmin(): Promise<boolean>;
+    saveAssessmentSubmission(submission: AssessmentSubmission): Promise<bigint>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    saveWellnessReport(report: CompleteWellnessReport): Promise<bigint>;
-    validateMedicalHistory(medicalHistory: MedicalHistory): Promise<MedicalHistory>;
 }
-import type { CompleteWellnessReport as _CompleteWellnessReport, MedicalHistory as _MedicalHistory, SectionId as _SectionId, SectionScores as _SectionScores, SolutionTip as _SolutionTip, Time as _Time, UserAnswers as _UserAnswers, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
+import type { AssessmentSubmission as _AssessmentSubmission, AssessmentSummary as _AssessmentSummary, Id as _Id, MedicalHistory as _MedicalHistory, SectionId as _SectionId, SectionScores as _SectionScores, SolutionTip as _SolutionTip, Time as _Time, UserAnswers as _UserAnswers, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
@@ -231,60 +255,95 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async getAllSections(): Promise<Array<SectionId>> {
+    async getAdminDashboardStats(): Promise<{
+        recentSubmissionsCount: bigint;
+        scoringSummary: Array<number>;
+        alertUsersCount: bigint;
+        scoreDistribution: Array<number>;
+        totalAssessments: bigint;
+        averageScore: number;
+    }> {
         if (this.processError) {
             try {
-                const result = await this.actor.getAllSections();
+                const result = await this.actor.getAdminDashboardStats();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAdminDashboardStats();
+            return result;
+        }
+    }
+    async getAllAssessmentSummaries(): Promise<Array<AssessmentSummary>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllAssessmentSummaries();
                 return from_candid_vec_n3(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getAllSections();
+            const result = await this.actor.getAllAssessmentSummaries();
             return from_candid_vec_n3(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getAllWellnessReports(): Promise<Array<[bigint, CompleteWellnessReport]>> {
+    async getAllSections(): Promise<Array<SectionId>> {
         if (this.processError) {
             try {
-                const result = await this.actor.getAllWellnessReports();
-                return from_candid_vec_n6(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.getAllSections();
+                return from_candid_vec_n7(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getAllWellnessReports();
-            return from_candid_vec_n6(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.getAllSections();
+            return from_candid_vec_n7(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getAssessmentSubmissionById(arg0: bigint): Promise<AssessmentSubmission | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAssessmentSubmissionById(arg0);
+                return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAssessmentSubmissionById(arg0);
+            return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
         }
     }
     async getCallerUserProfile(): Promise<UserProfile | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserProfile();
-                return from_candid_opt_n17(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n6(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserProfile();
-            return from_candid_opt_n17(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n6(this._uploadFile, this._downloadFile, result);
         }
     }
     async getCallerUserRole(): Promise<UserRole> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserRole();
-                return from_candid_UserRole_n18(this._uploadFile, this._downloadFile, result);
+                return from_candid_UserRole_n20(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserRole();
-            return from_candid_UserRole_n18(this._uploadFile, this._downloadFile, result);
+            return from_candid_UserRole_n20(this._uploadFile, this._downloadFile, result);
         }
     }
     async getSectionScoringDetails(): Promise<{
@@ -296,14 +355,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getSectionScoringDetails();
-                return from_candid_record_n20(this._uploadFile, this._downloadFile, result);
+                return from_candid_record_n22(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getSectionScoringDetails();
-            return from_candid_record_n20(this._uploadFile, this._downloadFile, result);
+            return from_candid_record_n22(this._uploadFile, this._downloadFile, result);
         }
     }
     async getTestData(): Promise<[SectionScores, SectionScores, SectionScores, MedicalHistory, MedicalHistory, MedicalHistory]> {
@@ -338,28 +397,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getUserProfile(arg0);
-                return from_candid_opt_n17(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n6(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getUserProfile(arg0);
-            return from_candid_opt_n17(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async getWellnessReportById(arg0: bigint): Promise<CompleteWellnessReport | null> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getWellnessReportById(arg0);
-                return from_candid_opt_n25(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getWellnessReportById(arg0);
-            return from_candid_opt_n25(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n6(this._uploadFile, this._downloadFile, result);
         }
     }
     async isAdminUser(arg0: string): Promise<boolean> {
@@ -390,6 +435,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async saveAssessmentSubmission(arg0: AssessmentSubmission): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.saveAssessmentSubmission(to_candid_AssessmentSubmission_n27(this._uploadFile, this._downloadFile, arg0));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.saveAssessmentSubmission(to_candid_AssessmentSubmission_n27(this._uploadFile, this._downloadFile, arg0));
+            return result;
+        }
+    }
     async saveCallerUserProfile(arg0: UserProfile): Promise<void> {
         if (this.processError) {
             try {
@@ -404,54 +463,59 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async saveWellnessReport(arg0: CompleteWellnessReport): Promise<bigint> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.saveWellnessReport(to_candid_CompleteWellnessReport_n26(this._uploadFile, this._downloadFile, arg0));
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.saveWellnessReport(to_candid_CompleteWellnessReport_n26(this._uploadFile, this._downloadFile, arg0));
-            return result;
-        }
-    }
-    async validateMedicalHistory(arg0: MedicalHistory): Promise<MedicalHistory> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.validateMedicalHistory(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.validateMedicalHistory(arg0);
-            return result;
-        }
-    }
 }
-function from_candid_CompleteWellnessReport_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _CompleteWellnessReport): CompleteWellnessReport {
-    return from_candid_record_n9(_uploadFile, _downloadFile, value);
-}
-function from_candid_SectionId_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _SectionId): SectionId {
-    return from_candid_variant_n5(_uploadFile, _downloadFile, value);
-}
-function from_candid_SolutionTip_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _SolutionTip): SolutionTip {
+function from_candid_AssessmentSubmission_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _AssessmentSubmission): AssessmentSubmission {
     return from_candid_record_n12(_uploadFile, _downloadFile, value);
 }
-function from_candid_UserRole_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
-    return from_candid_variant_n19(_uploadFile, _downloadFile, value);
+function from_candid_AssessmentSummary_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _AssessmentSummary): AssessmentSummary {
+    return from_candid_record_n5(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
+function from_candid_SectionId_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _SectionId): SectionId {
+    return from_candid_variant_n9(_uploadFile, _downloadFile, value);
+}
+function from_candid_SolutionTip_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _SolutionTip): SolutionTip {
+    return from_candid_record_n15(_uploadFile, _downloadFile, value);
+}
+function from_candid_UserRole_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
+    return from_candid_variant_n21(_uploadFile, _downloadFile, value);
+}
+function from_candid_opt_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_AssessmentSubmission]): AssessmentSubmission | null {
+    return value.length === 0 ? null : from_candid_AssessmentSubmission_n11(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_CompleteWellnessReport]): CompleteWellnessReport | null {
-    return value.length === 0 ? null : from_candid_CompleteWellnessReport_n8(_uploadFile, _downloadFile, value[0]);
-}
 function from_candid_record_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    recommendations: Array<_SolutionTip>;
+    scores: _SectionScores;
+    user: [] | [_UserProfile];
+    problems: Array<string>;
+    timestamp: _Time;
+    healthProfile: {
+        answers: _UserAnswers;
+        medicalHistory: _MedicalHistory;
+    };
+}): {
+    recommendations: Array<SolutionTip>;
+    scores: SectionScores;
+    user?: UserProfile;
+    problems: Array<string>;
+    timestamp: Time;
+    healthProfile: {
+        answers: UserAnswers;
+        medicalHistory: MedicalHistory;
+    };
+} {
+    return {
+        recommendations: from_candid_vec_n13(_uploadFile, _downloadFile, value.recommendations),
+        scores: value.scores,
+        user: record_opt_to_undefined(from_candid_opt_n6(_uploadFile, _downloadFile, value.user)),
+        problems: value.problems,
+        timestamp: value.timestamp,
+        healthProfile: value.healthProfile
+    };
+}
+function from_candid_record_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     medicalFitForHeartProblems: boolean;
     medicalFitForThyroid: boolean;
     medicalFitForHighBMI: boolean;
@@ -525,22 +589,22 @@ function from_candid_record_n12(_uploadFile: (file: ExternalBlob) => Promise<Uin
         medicalFitForThyroid: value.medicalFitForThyroid,
         medicalFitForHighBMI: value.medicalFitForHighBMI,
         text: value.text,
-        section: from_candid_SectionId_n4(_uploadFile, _downloadFile, value.section),
-        costLevel: from_candid_variant_n13(_uploadFile, _downloadFile, value.costLevel),
-        timeCommitment: from_candid_variant_n14(_uploadFile, _downloadFile, value.timeCommitment),
+        section: from_candid_SectionId_n8(_uploadFile, _downloadFile, value.section),
+        costLevel: from_candid_variant_n16(_uploadFile, _downloadFile, value.costLevel),
+        timeCommitment: from_candid_variant_n17(_uploadFile, _downloadFile, value.timeCommitment),
         medicalFitForAlcoholUse: value.medicalFitForAlcoholUse,
         medicalFitForAnemia: value.medicalFitForAnemia,
-        severity: from_candid_variant_n13(_uploadFile, _downloadFile, value.severity),
+        severity: from_candid_variant_n16(_uploadFile, _downloadFile, value.severity),
         medicalFitForKidney: value.medicalFitForKidney,
         medicalFitForPregnancy: value.medicalFitForPregnancy,
         medicalFitForBloodPressure: value.medicalFitForBloodPressure,
-        medicalRisk: from_candid_variant_n15(_uploadFile, _downloadFile, value.medicalRisk),
+        medicalRisk: from_candid_variant_n18(_uploadFile, _downloadFile, value.medicalRisk),
         medicalFitForCholesterol: value.medicalFitForCholesterol,
-        suitability: from_candid_variant_n16(_uploadFile, _downloadFile, value.suitability),
+        suitability: from_candid_variant_n19(_uploadFile, _downloadFile, value.suitability),
         medicalFitForSugar: value.medicalFitForSugar
     };
 }
-function from_candid_record_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_record_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     questionPoints: Array<[_SectionId, Array<bigint>]>;
     scoringReference: Array<[bigint, string]>;
     sectionEndQuestion: Array<[_SectionId, bigint]>;
@@ -552,58 +616,70 @@ function from_candid_record_n20(_uploadFile: (file: ExternalBlob) => Promise<Uin
     sectionStartQuestion: Array<[SectionId, bigint]>;
 } {
     return {
-        questionPoints: from_candid_vec_n21(_uploadFile, _downloadFile, value.questionPoints),
+        questionPoints: from_candid_vec_n23(_uploadFile, _downloadFile, value.questionPoints),
         scoringReference: value.scoringReference,
-        sectionEndQuestion: from_candid_vec_n23(_uploadFile, _downloadFile, value.sectionEndQuestion),
-        sectionStartQuestion: from_candid_vec_n23(_uploadFile, _downloadFile, value.sectionStartQuestion)
+        sectionEndQuestion: from_candid_vec_n25(_uploadFile, _downloadFile, value.sectionEndQuestion),
+        sectionStartQuestion: from_candid_vec_n25(_uploadFile, _downloadFile, value.sectionStartQuestion)
     };
 }
-function from_candid_record_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    recommendations: Array<_SolutionTip>;
+function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    id: _Id;
+    recommendationsCount: bigint;
+    alertScoreCount: bigint;
     scores: _SectionScores;
+    user: [] | [_UserProfile];
+    atRiskCount: bigint;
+    alertScaleAverage: number;
+    totalScore: bigint;
+    atRiskScaleAverage: number;
     problems: Array<string>;
     timestamp: _Time;
-    healthProfile: {
-        answers: _UserAnswers;
-        medicalHistory: _MedicalHistory;
-    };
+    elevatedRiskScaleAverage: number;
+    elevatedRiskCount: bigint;
 }): {
-    recommendations: Array<SolutionTip>;
+    id: Id;
+    recommendationsCount: bigint;
+    alertScoreCount: bigint;
     scores: SectionScores;
+    user?: UserProfile;
+    atRiskCount: bigint;
+    alertScaleAverage: number;
+    totalScore: bigint;
+    atRiskScaleAverage: number;
     problems: Array<string>;
     timestamp: Time;
-    healthProfile: {
-        answers: UserAnswers;
-        medicalHistory: MedicalHistory;
-    };
+    elevatedRiskScaleAverage: number;
+    elevatedRiskCount: bigint;
 } {
     return {
-        recommendations: from_candid_vec_n10(_uploadFile, _downloadFile, value.recommendations),
+        id: value.id,
+        recommendationsCount: value.recommendationsCount,
+        alertScoreCount: value.alertScoreCount,
         scores: value.scores,
+        user: record_opt_to_undefined(from_candid_opt_n6(_uploadFile, _downloadFile, value.user)),
+        atRiskCount: value.atRiskCount,
+        alertScaleAverage: value.alertScaleAverage,
+        totalScore: value.totalScore,
+        atRiskScaleAverage: value.atRiskScaleAverage,
         problems: value.problems,
         timestamp: value.timestamp,
-        healthProfile: value.healthProfile
+        elevatedRiskScaleAverage: value.elevatedRiskScaleAverage,
+        elevatedRiskCount: value.elevatedRiskCount
     };
 }
-function from_candid_tuple_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [_SectionId, Array<bigint>]): [SectionId, Array<bigint>] {
+function from_candid_tuple_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [_SectionId, Array<bigint>]): [SectionId, Array<bigint>] {
     return [
-        from_candid_SectionId_n4(_uploadFile, _downloadFile, value[0]),
+        from_candid_SectionId_n8(_uploadFile, _downloadFile, value[0]),
         value[1]
     ];
 }
-function from_candid_tuple_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [_SectionId, bigint]): [SectionId, bigint] {
+function from_candid_tuple_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [_SectionId, bigint]): [SectionId, bigint] {
     return [
-        from_candid_SectionId_n4(_uploadFile, _downloadFile, value[0]),
+        from_candid_SectionId_n8(_uploadFile, _downloadFile, value[0]),
         value[1]
     ];
 }
-function from_candid_tuple_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [bigint, _CompleteWellnessReport]): [bigint, CompleteWellnessReport] {
-    return [
-        value[0],
-        from_candid_CompleteWellnessReport_n8(_uploadFile, _downloadFile, value[1])
-    ];
-}
-function from_candid_variant_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     low: null;
 } | {
     high: null;
@@ -612,7 +688,7 @@ function from_candid_variant_n13(_uploadFile: (file: ExternalBlob) => Promise<Ui
 }): Variant_low_high_medium {
     return "low" in value ? Variant_low_high_medium.low : "high" in value ? Variant_low_high_medium.high : "medium" in value ? Variant_low_high_medium.medium : value;
 }
-function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     long: null;
 } | {
     short: null;
@@ -621,7 +697,7 @@ function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Ui
 }): Variant_long_short_medium {
     return "long" in value ? Variant_long_short_medium.long : "short" in value ? Variant_long_short_medium.short : "medium" in value ? Variant_long_short_medium.medium : value;
 }
-function from_candid_variant_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     low: null;
 } | {
     high: null;
@@ -630,7 +706,7 @@ function from_candid_variant_n15(_uploadFile: (file: ExternalBlob) => Promise<Ui
 }): Variant_low_high_none {
     return "low" in value ? Variant_low_high_none.low : "high" in value ? Variant_low_high_none.high : "none" in value ? Variant_low_high_none.none : value;
 }
-function from_candid_variant_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     all: null;
 } | {
     elderly: null;
@@ -641,7 +717,7 @@ function from_candid_variant_n16(_uploadFile: (file: ExternalBlob) => Promise<Ui
 }): Variant_all_elderly_pregnant_youth {
     return "all" in value ? Variant_all_elderly_pregnant_youth.all : "elderly" in value ? Variant_all_elderly_pregnant_youth.elderly : "pregnant" in value ? Variant_all_elderly_pregnant_youth.pregnant : "youth" in value ? Variant_all_elderly_pregnant_youth.youth : value;
 }
-function from_candid_variant_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     admin: null;
 } | {
     user: null;
@@ -650,7 +726,7 @@ function from_candid_variant_n19(_uploadFile: (file: ExternalBlob) => Promise<Ui
 }): UserRole {
     return "admin" in value ? UserRole.admin : "user" in value ? UserRole.user : "guest" in value ? UserRole.guest : value;
 }
-function from_candid_variant_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     diet: null;
 } | {
     exercise: null;
@@ -661,36 +737,37 @@ function from_candid_variant_n5(_uploadFile: (file: ExternalBlob) => Promise<Uin
 }): SectionId {
     return "diet" in value ? SectionId.diet : "exercise" in value ? SectionId.exercise : "sleep" in value ? SectionId.sleep : "hydration" in value ? SectionId.hydration : value;
 }
-function from_candid_vec_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_SolutionTip>): Array<SolutionTip> {
-    return value.map((x)=>from_candid_SolutionTip_n11(_uploadFile, _downloadFile, x));
+function from_candid_vec_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_SolutionTip>): Array<SolutionTip> {
+    return value.map((x)=>from_candid_SolutionTip_n14(_uploadFile, _downloadFile, x));
 }
-function from_candid_vec_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<[_SectionId, Array<bigint>]>): Array<[SectionId, Array<bigint>]> {
-    return value.map((x)=>from_candid_tuple_n22(_uploadFile, _downloadFile, x));
-}
-function from_candid_vec_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<[_SectionId, bigint]>): Array<[SectionId, bigint]> {
+function from_candid_vec_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<[_SectionId, Array<bigint>]>): Array<[SectionId, Array<bigint>]> {
     return value.map((x)=>from_candid_tuple_n24(_uploadFile, _downloadFile, x));
 }
-function from_candid_vec_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_SectionId>): Array<SectionId> {
-    return value.map((x)=>from_candid_SectionId_n4(_uploadFile, _downloadFile, x));
+function from_candid_vec_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<[_SectionId, bigint]>): Array<[SectionId, bigint]> {
+    return value.map((x)=>from_candid_tuple_n26(_uploadFile, _downloadFile, x));
 }
-function from_candid_vec_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<[bigint, _CompleteWellnessReport]>): Array<[bigint, CompleteWellnessReport]> {
-    return value.map((x)=>from_candid_tuple_n7(_uploadFile, _downloadFile, x));
+function from_candid_vec_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_AssessmentSummary>): Array<AssessmentSummary> {
+    return value.map((x)=>from_candid_AssessmentSummary_n4(_uploadFile, _downloadFile, x));
 }
-function to_candid_CompleteWellnessReport_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: CompleteWellnessReport): _CompleteWellnessReport {
-    return to_candid_record_n27(_uploadFile, _downloadFile, value);
+function from_candid_vec_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_SectionId>): Array<SectionId> {
+    return value.map((x)=>from_candid_SectionId_n8(_uploadFile, _downloadFile, x));
 }
-function to_candid_SectionId_n31(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SectionId): _SectionId {
-    return to_candid_variant_n32(_uploadFile, _downloadFile, value);
+function to_candid_AssessmentSubmission_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: AssessmentSubmission): _AssessmentSubmission {
+    return to_candid_record_n28(_uploadFile, _downloadFile, value);
 }
-function to_candid_SolutionTip_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SolutionTip): _SolutionTip {
-    return to_candid_record_n30(_uploadFile, _downloadFile, value);
+function to_candid_SectionId_n32(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SectionId): _SectionId {
+    return to_candid_variant_n33(_uploadFile, _downloadFile, value);
+}
+function to_candid_SolutionTip_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SolutionTip): _SolutionTip {
+    return to_candid_record_n31(_uploadFile, _downloadFile, value);
 }
 function to_candid_UserRole_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
     return to_candid_variant_n2(_uploadFile, _downloadFile, value);
 }
-function to_candid_record_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function to_candid_record_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     recommendations: Array<SolutionTip>;
     scores: SectionScores;
+    user?: UserProfile;
     problems: Array<string>;
     timestamp: Time;
     healthProfile: {
@@ -700,6 +777,7 @@ function to_candid_record_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8
 }): {
     recommendations: Array<_SolutionTip>;
     scores: _SectionScores;
+    user: [] | [_UserProfile];
     problems: Array<string>;
     timestamp: _Time;
     healthProfile: {
@@ -708,14 +786,15 @@ function to_candid_record_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8
     };
 } {
     return {
-        recommendations: to_candid_vec_n28(_uploadFile, _downloadFile, value.recommendations),
+        recommendations: to_candid_vec_n29(_uploadFile, _downloadFile, value.recommendations),
         scores: value.scores,
+        user: value.user ? candid_some(value.user) : candid_none(),
         problems: value.problems,
         timestamp: value.timestamp,
         healthProfile: value.healthProfile
     };
 }
-function to_candid_record_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function to_candid_record_n31(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     medicalFitForHeartProblems: boolean;
     medicalFitForThyroid: boolean;
     medicalFitForHighBMI: boolean;
@@ -789,18 +868,18 @@ function to_candid_record_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8
         medicalFitForThyroid: value.medicalFitForThyroid,
         medicalFitForHighBMI: value.medicalFitForHighBMI,
         text: value.text,
-        section: to_candid_SectionId_n31(_uploadFile, _downloadFile, value.section),
-        costLevel: to_candid_variant_n33(_uploadFile, _downloadFile, value.costLevel),
-        timeCommitment: to_candid_variant_n34(_uploadFile, _downloadFile, value.timeCommitment),
+        section: to_candid_SectionId_n32(_uploadFile, _downloadFile, value.section),
+        costLevel: to_candid_variant_n34(_uploadFile, _downloadFile, value.costLevel),
+        timeCommitment: to_candid_variant_n35(_uploadFile, _downloadFile, value.timeCommitment),
         medicalFitForAlcoholUse: value.medicalFitForAlcoholUse,
         medicalFitForAnemia: value.medicalFitForAnemia,
-        severity: to_candid_variant_n33(_uploadFile, _downloadFile, value.severity),
+        severity: to_candid_variant_n34(_uploadFile, _downloadFile, value.severity),
         medicalFitForKidney: value.medicalFitForKidney,
         medicalFitForPregnancy: value.medicalFitForPregnancy,
         medicalFitForBloodPressure: value.medicalFitForBloodPressure,
-        medicalRisk: to_candid_variant_n35(_uploadFile, _downloadFile, value.medicalRisk),
+        medicalRisk: to_candid_variant_n36(_uploadFile, _downloadFile, value.medicalRisk),
         medicalFitForCholesterol: value.medicalFitForCholesterol,
-        suitability: to_candid_variant_n36(_uploadFile, _downloadFile, value.suitability),
+        suitability: to_candid_variant_n37(_uploadFile, _downloadFile, value.suitability),
         medicalFitForSugar: value.medicalFitForSugar
     };
 }
@@ -819,7 +898,7 @@ function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8
         guest: null
     } : value;
 }
-function to_candid_variant_n32(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SectionId): {
+function to_candid_variant_n33(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SectionId): {
     diet: null;
 } | {
     exercise: null;
@@ -838,7 +917,7 @@ function to_candid_variant_n32(_uploadFile: (file: ExternalBlob) => Promise<Uint
         hydration: null
     } : value;
 }
-function to_candid_variant_n33(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Variant_low_high_medium): {
+function to_candid_variant_n34(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Variant_low_high_medium): {
     low: null;
 } | {
     high: null;
@@ -853,7 +932,7 @@ function to_candid_variant_n33(_uploadFile: (file: ExternalBlob) => Promise<Uint
         medium: null
     } : value;
 }
-function to_candid_variant_n34(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Variant_long_short_medium): {
+function to_candid_variant_n35(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Variant_long_short_medium): {
     long: null;
 } | {
     short: null;
@@ -868,7 +947,7 @@ function to_candid_variant_n34(_uploadFile: (file: ExternalBlob) => Promise<Uint
         medium: null
     } : value;
 }
-function to_candid_variant_n35(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Variant_low_high_none): {
+function to_candid_variant_n36(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Variant_low_high_none): {
     low: null;
 } | {
     high: null;
@@ -883,7 +962,7 @@ function to_candid_variant_n35(_uploadFile: (file: ExternalBlob) => Promise<Uint
         none: null
     } : value;
 }
-function to_candid_variant_n36(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Variant_all_elderly_pregnant_youth): {
+function to_candid_variant_n37(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Variant_all_elderly_pregnant_youth): {
     all: null;
 } | {
     elderly: null;
@@ -902,8 +981,8 @@ function to_candid_variant_n36(_uploadFile: (file: ExternalBlob) => Promise<Uint
         youth: null
     } : value;
 }
-function to_candid_vec_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<SolutionTip>): Array<_SolutionTip> {
-    return value.map((x)=>to_candid_SolutionTip_n29(_uploadFile, _downloadFile, x));
+function to_candid_vec_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<SolutionTip>): Array<_SolutionTip> {
+    return value.map((x)=>to_candid_SolutionTip_n30(_uploadFile, _downloadFile, x));
 }
 export interface CreateActorOptions {
     agent?: Agent;

@@ -1,21 +1,27 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "ABL Pulse project with admin dashboard feature",
-  "architectural_notes": [
-    "Admin dashboard should be directly accessible without authentication",
-    "Admin button located in ABL Pulse footer"
-  ],
+  "summary": "New project",
+  "architectural_notes": [],
   "known_issues": [
-    "Admin button in footer showing 'Access Denied' page instead of linking to admin dashboard"
+    "Admin dashboard not connected to backend - submitted assessments not displaying in list or stats cards",
+    "Assessment submission works and shows report, but data not persisting to admin view"
   ],
   "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-remove-or-bypass-authentication-authorization-checks-on-the-admindashboardpage-component-to-allow-direct-access-without-login",
-      "title": "Remove or bypass authentication/authorization checks on the AdminDashboardPage component to allow direct access without login",
+      "id": "feature-update-usequeries-hook-to-fetch-real-assessment-data-from-backend-using-the-new-query-functions-instead-of-returning-empty-arrays",
+      "title": "Update useQueries hook to fetch real assessment data from backend using the new query functions instead of returning empty arrays",
       "reqIds": [
-        "REQ-2"
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-connect-quickstatscards-component-to-display-real-statistics-from-backend-data-instead-of-calculating-from-empty-arrays",
+      "title": "Connect QuickStatsCards component to display real statistics from backend data instead of calculating from empty arrays",
+      "reqIds": [
+        "REQ-4"
       ],
       "version": 1
     }
@@ -23,15 +29,31 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Fix admin button in footer to directly link to admin dashboard without authentication",
+      "summary": "Connect admin dashboard to backend database to display submitted assessments list and stats cards",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Update the admin button in the ContactFooter component to navigate directly to the admin dashboard page (/admin) without requiring authentication or authorization checks",
+      "summary": "Implement backend query function to retrieve all submitted assessments with details including student name, score, total questions, submission timestamp, and answers breakdown",
       "reqIds": [
         "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Implement backend function to calculate and return admin dashboard statistics including total assessment count, average score, alert users count, and recent submissions count",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Connect UserAssessmentDataTable component to display the list of submitted assessments fetched from backend with all filtering and sorting functionality working on real data",
+      "reqIds": [
+        "REQ-5"
       ],
       "status": "pending"
     }

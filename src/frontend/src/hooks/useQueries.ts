@@ -1,47 +1,34 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import { Principal } from '@icp-sdk/core/principal';
-import type { CompleteWellnessReport, UserAnswers, MedicalHistory } from '../backend';
+import type { AssessmentSubmission } from '../backend';
 import { AdminAssessmentRow } from '@/types/admin';
 
-export function useGetAllWellnessReports() {
+export function useGetAssessmentSubmissionById(id: bigint | null) {
   const { actor, isFetching } = useActor();
 
   return useQuery({
-    queryKey: ['wellnessReports'],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.getAllWellnessReports();
-    },
-    enabled: !!actor && !isFetching,
-  });
-}
-
-export function useGetWellnessReportById(id: bigint | null) {
-  const { actor, isFetching } = useActor();
-
-  return useQuery({
-    queryKey: ['wellnessReport', id?.toString()],
+    queryKey: ['assessmentSubmission', id?.toString()],
     queryFn: async () => {
       if (!actor || !id) return null;
-      return actor.getWellnessReportById(id);
+      return actor.getAssessmentSubmissionById(id);
     },
     enabled: !!actor && !isFetching && id !== null,
   });
 }
 
-export function useSaveWellnessReport() {
+export function useSaveAssessmentSubmission() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (report: CompleteWellnessReport) => {
+    mutationFn: async (submission: AssessmentSubmission) => {
       if (!actor) throw new Error('Actor not initialized');
-      return actor.saveWellnessReport(report);
+      return actor.saveAssessmentSubmission(submission);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['wellnessReports'] });
+      queryClient.invalidateQueries({ queryKey: ['assessmentSubmission'] });
       queryClient.invalidateQueries({ queryKey: ['adminAssessments'] });
+      queryClient.invalidateQueries({ queryKey: ['adminStats'] });
     },
   });
 }
@@ -79,8 +66,8 @@ export function useIsAdminUser(email: string | null) {
 }
 
 /**
- * Hook to fetch all wellness reports for admin dashboard
- * Transforms backend data into frontend-friendly format
+ * Hook to fetch all assessment summaries for admin dashboard
+ * Transforms backend AssessmentSummary[] data into AdminAssessmentRow[] format
  */
 export function useAdminAssessments() {
   const { actor, isFetching: actorFetching } = useActor();
@@ -90,49 +77,73 @@ export function useAdminAssessments() {
     queryFn: async () => {
       if (!actor) throw new Error('Actor not available');
 
-      const reports = await actor.getAllWellnessReports();
+      const summaries = await actor.getAllAssessmentSummaries();
 
-      // Transform backend data to frontend format
-      return reports.map(([id, report]) => {
-        // Calculate section scores from answers
-        const calculateScore = (answers: bigint[]): number => {
-          return answers.reduce((sum, val) => sum + Number(val), 0);
-        };
-
-        const sleepScore = calculateScore(report.healthProfile.answers.sleep);
-        const hydrationScore = calculateScore(report.healthProfile.answers.hydration);
-        const dietScore = calculateScore(report.healthProfile.answers.diet);
-        const exerciseScore = calculateScore(report.healthProfile.answers.exercise);
-
-        const totalScore = sleepScore + hydrationScore + dietScore + exerciseScore;
-
-        // Extract user info from recommendations or use placeholder
-        // Note: Backend doesn't store user name/contact in report, so we'll need to enhance this
-        // For now, we'll use placeholder data
-        const userName = `User ${Number(id)}`;
-        const whatsappNumber = 'N/A';
-        const email = null;
+      // Transform backend AssessmentSummary[] to AdminAssessmentRow[]
+      return summaries.map((summary) => {
+        const totalScore = Number(summary.totalScore);
+        
+        // Extract user name from summary
+        const userName = summary.user?.name || `User ${Number(summary.id)}`;
+        
+        // Convert timestamp from nanoseconds to milliseconds
+        const assessmentDate = new Date(Number(summary.timestamp) / 1_000_000);
 
         return {
-          id: Number(id),
+          id: Number(summary.id),
           userName,
-          assessmentDate: new Date(Number(report.timestamp) / 1000000), // Convert nanoseconds to milliseconds
+          assessmentDate,
           totalScore,
           sectionScores: {
-            sleep: sleepScore,
-            hydration: hydrationScore,
-            diet: dietScore,
-            exercise: exerciseScore,
+            sleep: Number(summary.scores.sleep),
+            hydration: Number(summary.scores.hydration),
+            diet: Number(summary.scores.diet),
+            exercise: Number(summary.scores.exercise),
           },
-          whatsappNumber,
-          email,
+          whatsappNumber: 'N/A', // Not stored in backend yet
+          email: null, // Not stored in backend yet
         };
       });
     },
     enabled: !!actor && !actorFetching,
     staleTime: 30000, // 30 seconds
-    gcTime: 300000, // 5 minutes (formerly cacheTime)
+    gcTime: 300000, // 5 minutes
     refetchOnWindowFocus: true,
+    retry: 2,
+  });
+
+  return {
+    ...query,
+    isLoading: actorFetching || query.isLoading,
+  };
+}
+
+/**
+ * Hook to fetch admin dashboard statistics from backend
+ * Returns pre-calculated stats including total assessments, average score, alert users, and recent submissions
+ */
+export function useAdminStats() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  const query = useQuery({
+    queryKey: ['adminStats'],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      
+      const stats = await actor.getAdminDashboardStats();
+      
+      return {
+        totalAssessments: Number(stats.totalAssessments),
+        averageScore: stats.averageScore,
+        alertUsersCount: Number(stats.alertUsersCount),
+        recentSubmissionsCount: Number(stats.recentSubmissionsCount),
+      };
+    },
+    enabled: !!actor && !actorFetching,
+    staleTime: 30000, // 30 seconds
+    gcTime: 300000, // 5 minutes
+    refetchOnWindowFocus: true,
+    retry: 2,
   });
 
   return {

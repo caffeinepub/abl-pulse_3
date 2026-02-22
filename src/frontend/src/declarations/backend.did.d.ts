@@ -10,9 +10,10 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
-export interface CompleteWellnessReport {
+export interface AssessmentSubmission {
   'recommendations' : Array<SolutionTip>,
   'scores' : SectionScores,
+  'user' : [] | [UserProfile],
   'problems' : Array<string>,
   'timestamp' : Time,
   'healthProfile' : {
@@ -20,6 +21,22 @@ export interface CompleteWellnessReport {
     'medicalHistory' : MedicalHistory,
   },
 }
+export interface AssessmentSummary {
+  'id' : Id,
+  'recommendationsCount' : bigint,
+  'alertScoreCount' : bigint,
+  'scores' : SectionScores,
+  'user' : [] | [UserProfile],
+  'atRiskCount' : bigint,
+  'alertScaleAverage' : number,
+  'totalScore' : bigint,
+  'atRiskScaleAverage' : number,
+  'problems' : Array<string>,
+  'timestamp' : Time,
+  'elevatedRiskScaleAverage' : number,
+  'elevatedRiskCount' : bigint,
+}
+export type Id = bigint;
 export interface MedicalHistory {
   'hasProblemsWithPregnancy' : boolean,
   'hasProblemsWithAlcoholUse' : boolean,
@@ -86,10 +103,22 @@ export type UserRole = { 'admin' : null } |
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'getAllSections' : ActorMethod<[], Array<SectionId>>,
-  'getAllWellnessReports' : ActorMethod<
+  'getAdminDashboardStats' : ActorMethod<
     [],
-    Array<[bigint, CompleteWellnessReport]>
+    {
+      'recentSubmissionsCount' : bigint,
+      'scoringSummary' : Array<number>,
+      'alertUsersCount' : bigint,
+      'scoreDistribution' : Array<number>,
+      'totalAssessments' : bigint,
+      'averageScore' : number,
+    }
+  >,
+  'getAllAssessmentSummaries' : ActorMethod<[], Array<AssessmentSummary>>,
+  'getAllSections' : ActorMethod<[], Array<SectionId>>,
+  'getAssessmentSubmissionById' : ActorMethod<
+    [bigint],
+    [] | [AssessmentSubmission]
   >,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
@@ -114,15 +143,10 @@ export interface _SERVICE {
     ]
   >,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
-  'getWellnessReportById' : ActorMethod<
-    [bigint],
-    [] | [CompleteWellnessReport]
-  >,
   'isAdminUser' : ActorMethod<[string], boolean>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'saveAssessmentSubmission' : ActorMethod<[AssessmentSubmission], bigint>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
-  'saveWellnessReport' : ActorMethod<[CompleteWellnessReport], bigint>,
-  'validateMedicalHistory' : ActorMethod<[MedicalHistory], MedicalHistory>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

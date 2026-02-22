@@ -1,37 +1,70 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix Admin Button Footer Link to Admin Dashboard",
+  "title": "Connect Admin Dashboard to Backend Database - Frontend Implementation",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Update the admin button in the ContactFooter component to navigate directly to the admin dashboard page (/admin) without requiring authentication or authorization checks",
+      "id": "REQ-3",
+      "summary": "Update useQueries hook to fetch real assessment data from backend query functions",
       "acceptanceCriteria": [
-        "Clicking the admin button in the footer navigates to the admin dashboard page",
-        "No 'Access Denied' screen appears when clicking the admin button",
-        "Admin dashboard page loads directly without authentication checks"
+        "useAdminAssessments hook calls backend query function and returns assessment list",
+        "Loading states are properly handled during data fetch",
+        "Error states are handled and displayed to user",
+        "Data is properly transformed from backend format to frontend AdminAssessmentRow type"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/ContactFooter.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Update the admin button to use React Router's Link component with to='/admin' prop to enable direct navigation to the admin dashboard. Remove any onClick handlers or conditional logic that might prevent navigation. Ensure the button is always visible and clickable without authentication state checks."
+          "description": "Replace the empty array return in useAdminAssessments with a call to actor.getAllAssessmentSummaries(). Transform the backend AssessmentSummary[] data to AdminAssessmentRow[] format by mapping id to string, extracting user.name as studentName, calculating score from scores object (diet + exercise + sleep + hydration), setting totalQuestions to 40, converting timestamp to submittedAt Date, and deriving answers breakdown from the scores object. Ensure proper error handling and loading states are exposed through the query object."
         }
       ]
     },
     {
-      "id": "REQ-2",
-      "summary": "Remove or bypass authentication/authorization checks on the AdminDashboardPage component to allow direct access without login",
+      "id": "REQ-4",
+      "summary": "Connect QuickStatsCards component to display real statistics from backend data",
       "acceptanceCriteria": [
-        "Admin dashboard page renders without checking for authentication state",
-        "Users can view admin dashboard content immediately upon navigation",
-        "No access denied or login redirect logic blocks access to the admin dashboard"
+        "Total Assessments card displays actual count from backend",
+        "Average Score card shows calculated average from all submissions",
+        "Alert Users card shows count of users with low scores",
+        "Recent Submissions card shows count of assessments from last 7 days",
+        "All cards update in real-time when new assessments are submitted"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/AdminDashboardPage.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Remove or comment out all authentication and authorization checks including useInternetIdentity hook usage, isAuthenticated checks, isAdmin checks, and any conditional rendering of AccessDeniedScreen. Allow the dashboard content (QuickStatsCards and UserAssessmentDataTable components) to render immediately without waiting for authentication state. Keep all existing dashboard functionality and data fetching logic intact."
+          "description": "Add a new useAdminStats hook that calls actor.getAdminDashboardStats() and returns the statistics object containing totalAssessments, averageScore, alertUsersCount, and recentSubmissionsCount. Set up React Query with queryKey ['adminStats'] and ensure the query is enabled when actor is available. Handle loading and error states appropriately."
+        },
+        {
+          "path": "frontend/src/components/admin/QuickStatsCards.tsx",
+          "operation": "modify",
+          "description": "Import and use the new useAdminStats hook instead of calculating stats from assessments array. Remove the local stats calculation logic and directly use the values from the hook (totalAssessments, averageScore, alertUsersCount, recentSubmissionsCount). Update the loading skeleton to trigger when the stats query isLoading is true. Ensure the component re-renders when stats data changes."
+        },
+        {
+          "path": "frontend/src/utils/adminStatsCalculator.ts",
+          "operation": "delete",
+          "description": "Remove this file as statistics calculation is now handled by the backend and no longer needed on the frontend."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Connect UserAssessmentDataTable component to display real backend data with all filtering and sorting functionality",
+      "acceptanceCriteria": [
+        "Table displays all submitted assessments from backend",
+        "Search filter works on student names",
+        "Date range filter works on submission timestamps",
+        "Score range filter works on assessment scores",
+        "Sorting functionality works on all columns",
+        "Pagination works correctly with real data",
+        "CSV export includes all real assessment data"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/admin/UserAssessmentDataTable.tsx",
+          "operation": "modify",
+          "description": "Replace the static SAMPLE_ASSESSMENT_DATA with data from useAdminAssessments hook. Add loading state handling to show skeleton or loading message when isLoading is true. Add error state handling to display error message if query fails. Ensure all existing filter logic (search, date range, score range), sorting, pagination, and CSV export continue to work with the real data from the backend. The data transformation from backend format to AdminAssessmentRow is already handled in the useQueries hook, so the table should work with the transformed data directly."
         }
       ]
     }

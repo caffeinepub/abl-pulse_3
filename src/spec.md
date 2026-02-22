@@ -1,11 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Make the admin dashboard directly accessible from the footer admin button without authentication checks.
+**Goal:** Connect the Admin Dashboard to the backend database to display real assessment data and statistics.
 
 **Planned changes:**
-- Update the admin button in the ContactFooter component to navigate directly to /admin
-- Remove or bypass authentication/authorization checks on the AdminDashboardPage component
-- Ensure no access denied screen appears when accessing the admin dashboard
+- Implement backend query functions to retrieve all submitted assessments with complete details (student name, score, answers, timestamps)
+- Implement backend function to calculate dashboard statistics (total assessments, average score, alert users, recent submissions)
+- Update frontend useQueries hooks to fetch real data from backend instead of returning empty arrays
+- Connect QuickStatsCards component to display actual statistics from backend
+- Connect UserAssessmentDataTable to display real assessment submissions with working filters, sorting, and pagination
 
-**User-visible outcome:** Users can click the admin button in the footer and immediately access the admin dashboard without encountering any authentication barriers or access denied screens.
+**User-visible outcome:** Admin dashboard displays real assessment submissions in the table, accurate statistics in the stat cards, and all filtering/sorting features work with actual data from the backend database.

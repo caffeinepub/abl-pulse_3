@@ -1,43 +1,80 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-21T22:49:18.384Z",
+  "generatedAt": "2026-02-22T00:02:29.793Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 1,
+    "total": 5,
+    "implemented": 2,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Update the admin button in the ContactFooter component to navigate directly to the admin dashboard page (/admin) without requiring authentication or authorization checks",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/components/ContactFooter.tsx"
-        ],
+        "summary": "Implement backend query function to retrieve all submitted assessments with details including student name, score, total questions, submission timestamp, and answers breakdown",
+        "status": "unknown",
+        "plannedFiles": [],
         "matchedFiles": []
       },
       {
         "id": "REQ-2",
-        "summary": "Remove or bypass authentication/authorization checks on the AdminDashboardPage component to allow direct access without login",
+        "summary": "Implement backend function to calculate and return admin dashboard statistics including total assessment count, average score, alert users count, and recent submissions count",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Update useQueries hook to fetch real assessment data from backend using the new query functions instead of returning empty arrays",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/AdminDashboardPage.tsx"
+          "frontend/src/hooks/useQueries.ts"
         ],
         "matchedFiles": [
-          "frontend/src/pages/AdminDashboardPage.tsx"
+          "frontend/src/hooks/useQueries.ts"
         ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Connect QuickStatsCards component to display real statistics from backend data instead of calculating from empty arrays",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/components/admin/QuickStatsCards.tsx",
+          "frontend/src/utils/adminStatsCalculator.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/components/admin/QuickStatsCards.tsx",
+          "frontend/src/utils/adminStatsCalculator.ts"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Connect UserAssessmentDataTable component to display the list of submitted assessments fetched from backend with all filtering and sorting functionality working on real data",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/components/admin/UserAssessmentDataTable.tsx"
+        ],
+        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/admin/QuickStatsCards.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useQueries.ts",
     "frontend/src/pages/AdminDashboardPage.tsx",
+    "frontend/src/utils/adminStatsCalculator.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

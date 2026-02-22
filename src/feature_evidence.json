@@ -2,10 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-remove-or-bypass-authentication-authorization-checks-on-the-admindashboardpage-component-to-allow-direct-access-without-login",
-      "featureTitle": "Remove or bypass authentication/authorization checks on the AdminDashboardPage component to allow direct access without login",
+      "featureId": "feature-update-usequeries-hook-to-fetch-real-assessment-data-from-backend-using-the-new-query-functions-instead-of-returning-empty-arrays",
+      "featureTitle": "Update useQueries hook to fetch real assessment data from backend using the new query functions instead of returning empty arrays",
       "files": [
-        "frontend/src/pages/AdminDashboardPage.tsx"
+        "frontend/src/hooks/useQueries.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -16,7 +16,28 @@
         "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-2"
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-connect-quickstatscards-component-to-display-real-statistics-from-backend-data-instead-of-calculating-from-empty-arrays",
+      "featureTitle": "Connect QuickStatsCards component to display real statistics from backend data instead of calculating from empty arrays",
+      "files": [
+        "frontend/src/components/admin/QuickStatsCards.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/utils/adminStatsCalculator.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
       ],
       "confidence": "high"
     }
